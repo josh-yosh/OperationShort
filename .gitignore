@@ -1,0 +1,23 @@
+# Build directories
+build/
+vcpkg/installed/
+CMakeFiles/
+CMakeCache.txt
+Makefile
+cmake_install.cmake
+
+# OS-specific files
+.DS_Store
+
+# Editors
+.vscode/
+*.code-workspace
+
+# Executables and object files
+*.exe
+*.out
+*.o
+*.obj
+
+# Logs
+*.log
