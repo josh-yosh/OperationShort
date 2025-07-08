@@ -1,14 +1,19 @@
+#define GLFW_INCLUDE_NONE
 #include <GLFW/glfw3.h>
+#include <glad/glad.h>
 #include <iostream>
+#include <imgui.h>
+
 
 int main() {
-    // Initialize GLFW
     if (!glfwInit()) {
         std::cerr << "Failed to initialize GLFW\n";
         return -1;
     }
 
-    // Create a windowed mode window and its OpenGL context
+    glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 4);
+    glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 1);
+
     GLFWwindow* window = glfwCreateWindow(800, 600, "GLFW Window", NULL, NULL);
     if (!window) {
         std::cerr << "Failed to create GLFW window\n";
@@ -16,18 +21,18 @@ int main() {
         return -1;
     }
 
-    // Make the window's context current
     glfwMakeContextCurrent(window);
 
-    // Loop until the user closes the window
+    // Initialize GLAD **after** context creation
+    if (!gladLoadGLLoader((GLADloadproc)glfwGetProcAddress)) {
+        std::cerr << "Failed to initialize GLAD\n";
+        return -1;
+    }
+
     while (!glfwWindowShouldClose(window)) {
-        // Render here (clear screen)
         glClear(GL_COLOR_BUFFER_BIT);
 
-        // Swap front and back buffers
         glfwSwapBuffers(window);
-
-        // Poll for and process events
         glfwPollEvents();
     }
 

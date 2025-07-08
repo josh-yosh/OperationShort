@@ -3,13 +3,13 @@
   "spdxVersion": "SPDX-2.2",
   "dataLicense": "CC0-1.0",
   "SPDXID": "SPDXRef-DOCUMENT",
-  "documentNamespace": "https://spdx.org/spdxdocs/vcpkg-cmake-arm64-osx-2024-04-23-fed85259-63bc-42d7-8872-59924ef878bb",
-  "name": "vcpkg-cmake:arm64-osx@2024-04-23 39217c618d34dd225e7c62b2165ed0c1bed1f221e348326c01f9bb00f90fbc60",
+  "documentNamespace": "https://spdx.org/spdxdocs/vcpkg-cmake-arm64-osx-2024-04-23-c8d1c874-bae9-48a8-97b4-0ec76d24d11a",
+  "name": "vcpkg-cmake:arm64-osx@2024-04-23 d6943f4c64a802be4dc471f1ff162526bfd20b1247cc656f32d2e3b4d1ac9e03",
   "creationInfo": {
     "creators": [
       "Tool: vcpkg-2025-06-20-ef7c0d541124bbdd334a03467e7edb6c3364d199"
     ],
-    "created": "2025-07-06T15:10:58Z"
+    "created": "2025-07-07T03:56:14Z"
   },
   "relationships": [
     {
@@ -102,7 +102,7 @@
     {
       "name": "vcpkg-cmake:arm64-osx",
       "SPDXID": "SPDXRef-binary",
-      "versionInfo": "39217c618d34dd225e7c62b2165ed0c1bed1f221e348326c01f9bb00f90fbc60",
+      "versionInfo": "d6943f4c64a802be4dc471f1ff162526bfd20b1247cc656f32d2e3b4d1ac9e03",
       "downloadLocation": "NONE",
       "licenseConcluded": "MIT",
       "licenseDeclared": "NOASSERTION",
