@@ -43,17 +43,64 @@ int main() {
 	glViewport(0, 0, screen_width, screen_height);
 
     UseImGui myimgui;
-    myimgui.Init(window, glsl_version);
+    // myimgui.Init(window, glsl_version);
+
+    IMGUI_CHECKVERSION();
+    ImGui::CreateContext();
+    ImGui::CreateContext();
+    ImGuiIO &io = ImGui::GetIO();
+    
+
+    // Setup Platform/RendererBindings
+    ImGui_ImplGlfw_InitForOpenGL(window, true);
+    ImGui_ImplOpenGL3_Init(glsl_version);
+
+
+    //AddFontFromFileTTF(const char* filename, float size_pixels, const ImFontConfig* font_cfg = NULL, const ImWchar* glyph_ranges = NULL);
+    static ImFont* defaultFont = io.Fonts->AddFontDefault();
+    static ImFont* bigFont = io.Fonts->AddFontFromFileTTF("./fonts/ProggyClean.ttf", 24.0f);
+    io.Fonts->Build();
 
 
     while (!glfwWindowShouldClose(window)) {
         glfwPollEvents();
 
         glClear(GL_COLOR_BUFFER_BIT);
+        // myimgui.NewFrame();
+
+         // feed inputs to dear imgui, start new frame
+        ImGui_ImplOpenGL3_NewFrame();
+        ImGui_ImplGlfw_NewFrame();
+        ImGui::NewFrame();
+
+        // myimgui.Update();        
+        ImGui::Begin("Graph");                          // Create a window called "Conan Logo" and append into it.
+
+        ImGui::PushFont(defaultFont);
+        bool show_demo_window = true;
         
-        myimgui.NewFrame();
-        myimgui.Update();
-        myimgui.Render();
+        ImGui::ShowDemoWindow(&show_demo_window);
+        ImGui::ShowStyleEditor(&(ImGui::GetStyle()));
+        
+        ImGui::Text("STOCK: ");
+        ImGui::BeginChild("Scrolling");
+
+        ImGui::PopFont();
+        ImGui::PushFont(bigFont);
+        for (int n = 0; n < 50; n++)
+            ImGui::Text("%04d: Some text", n);
+
+        ImGui::PopFont();
+        ImGui::EndChild();
+
+        ImGui::End();
+
+
+
+
+        // myimgui.Render();
+        ImGui::Render();
+	    ImGui_ImplOpenGL3_RenderDrawData(ImGui::GetDrawData());
 
         glfwSwapBuffers(window);
     }

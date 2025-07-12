@@ -5,11 +5,15 @@
 void UseImGui::Init(GLFWwindow* window, const char* glsl_version){
     IMGUI_CHECKVERSION();
     ImGui::CreateContext();
+    ImGui::CreateContext();
     ImGuiIO &io = ImGui::GetIO();
-    // Setup Olatform/RendererBindings
+    
+
+    // Setup Platform/RendererBindings
     ImGui_ImplGlfw_InitForOpenGL(window, true);
     ImGui_ImplOpenGL3_Init(glsl_version);
-    // ImGui::StyleColorsDark();
+
+
 };
 
 void UseImGui::NewFrame(){
@@ -20,9 +24,18 @@ void UseImGui::NewFrame(){
 }
 
 void UseImGui::Update(){
-    ImGui::Begin("Conan Logo");                          // Create a window called "Conan Logo" and append into it.
-  // draw conan logo if user didn't override update
-    ImGui::GetWindowDrawList();
+    ImGui::Begin("Graph");                          // Create a window called "Conan Logo" and append into it.
+
+    bool show_demo_window = true;
+
+    ImGui::ShowDemoWindow(&show_demo_window);
+    ImGui::ShowStyleEditor(&(ImGui::GetStyle()));
+    ImGui::Text("STOCK: ");
+    ImGui::BeginChild("Scrolling");
+    for (int n = 0; n < 50; n++)
+        ImGui::Text("%04d: Some text", n);
+    ImGui::EndChild();
+
 	ImGui::End();
 };
 
