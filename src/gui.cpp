@@ -135,6 +135,27 @@ int main() {
 
         //----------------------------------------------------------------------------
 
+        ImGui::SetNextWindowSizeConstraints(ImVec2(240,50), ImVec2(240,50));
+        ImGui::SetNextWindowPos(ImVec2(920, 35), ImGuiCond_Once);
+        bool p_open_false = false;
+        ImGui::PushStyleColor(ImGuiCol_Border, ImVec4(1.0f, 1.0f, 1.0f, 1.0f));
+
+        ImGui::Begin("Profit and Loss", &p_open_false, ImGuiWindowFlags_NoTitleBar | ImGuiWindowFlags_NoScrollbar);
+        ImGui::PopStyleColor();
+
+        ImGui::PushFont(headerFont);
+        ImGui::Text("P/L:");
+        ImGui::SameLine();
+
+        ImGui::PushStyleColor(ImGuiCol_Text, ImVec4(0.0f, 1.0f, 0.0f, 1.0f));
+        ImGui::Text("$200.43");
+        ImGui::PopStyleColor();
+
+        ImGui::PopFont();
+
+        ImGui::End();
+        
+        //----------------------------------------------------------------------------
         // myimgui.Render();
         ImGui::Render();
 	    ImGui_ImplOpenGL3_RenderDrawData(ImGui::GetDrawData());
