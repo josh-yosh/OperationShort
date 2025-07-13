@@ -2,21 +2,21 @@ Package: vcpkg-cmake-config
 Version: 2024-05-23
 Architecture: arm64-osx
 Multi-Arch: same
-Abi: 9b9d11b5ec6a4485aadf337cb95504d5d21f77a1c89857a5c35bf03260dad09c
+Abi: 659e6630303954b9bb5aac58d40cdd7a4c1f16d20663ec19e93a650ea4d44aab
 Status: install ok installed
 
 Package: vcpkg-cmake
 Version: 2024-04-23
 Architecture: arm64-osx
 Multi-Arch: same
-Abi: d6943f4c64a802be4dc471f1ff162526bfd20b1247cc656f32d2e3b4d1ac9e03
+Abi: d38b02d098d1c600f07637341b65fd8e7c6df3da988c2d75ffb93c20072c819d
 Status: install ok installed
 
 Package: egl-registry
 Version: 2024-01-25
 Architecture: arm64-osx
 Multi-Arch: same
-Abi: 9ee836661320b9dec84947e6e69f9adf11b992d59836bead83d2b3f31041a881
+Abi: 0af68e380e3939fb27894a9aa83349bbbdc27c071bfa36c3dd8fabf58241dd4f
 Description: EGL API and Extension Registry
 Status: install ok installed
 
@@ -26,7 +26,7 @@ Port-Version: 1
 Depends: egl-registry
 Architecture: arm64-osx
 Multi-Arch: same
-Abi: fbb975e3339493d70c2dadf0d140325a4e6290b90e22332633f877e35957b7f2
+Abi: 05ca1819dcd6d53c83018fd2ee01ba579d07428fd3435b878e4d5edcfd22a278
 Description: OpenGL, OpenGL ES, and OpenGL ES-SC API and Extension Registry
 Status: install ok installed
 
@@ -35,7 +35,7 @@ Version: 0.1.36
 Depends: egl-registry, opengl-registry, vcpkg-cmake, vcpkg-cmake-config
 Architecture: arm64-osx
 Multi-Arch: same
-Abi: 4599dba21dc299dd238a834a9a8ee38a38918a9544a1a1b4c24910cd4de6df05
+Abi: 91746642831682ad620f1a9b1f2fbb67c3478ec635805a88c5abd604f6870b2d
 Description: Multi-Language Vulkan/GL/GLES/EGL/GLX/WGL Loader-Generator based on the official specs.
 Default-Features: loader
 Status: install ok installed
@@ -53,7 +53,7 @@ Port-Version: 1
 Depends: vcpkg-cmake, vcpkg-cmake-config
 Architecture: arm64-osx
 Multi-Arch: same
-Abi: 91736b97d2492524c041764524af9422a7adf15dc76244ccc95af391668d8326
+Abi: ac35c87b3e6d6259ec875fd6030db984858c7759ae447d68ccf635e9698d73a3
 Description: GLFW is a free, Open Source, multi-platform library for OpenGL, OpenGL ES and Vulkan application development. It provides a simple, platform-independent API for creating windows, contexts and surfaces, reading input, handling events, etc.
 Status: install ok installed
 
@@ -62,7 +62,7 @@ Version: 1.91.9
 Depends: vcpkg-cmake, vcpkg-cmake-config
 Architecture: arm64-osx
 Multi-Arch: same
-Abi: a4fa6064e65f2c8782f64e68e89e930acf7c33ff0675e75cb2990ce1b1c4c322
+Abi: 4379b1442d04faae880436d3ea59759e0ab77d13353d2c57d62b3ab217ac5abf
 Description: Bloat-free Immediate Mode Graphical User interface for C++ with minimal dependencies.
 Status: install ok installed
 
