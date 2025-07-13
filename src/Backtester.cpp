@@ -11,7 +11,7 @@ Backtester::Backtester(int hour, int min, int sec, double stockP)
 
 double Backtester::sendTickPrice(Symbol symbol)
 {
-//need data
+    return 2.0; //temporary hold
 }
 
 void Backtester::simulateNextSecond()
@@ -40,7 +40,7 @@ int Backtester::getCurrentTimeSec()
 }
 int Backtester::getCurrentTimeFull()
 {
-    //might not need
+    return 120000; //temporary hold
 }
 double Backtester::sendSoldPrice()
 {
