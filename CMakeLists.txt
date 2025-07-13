@@ -10,7 +10,12 @@ find_package(glfw3 CONFIG REQUIRED)
 find_package(glad CONFIG REQUIRED)
 find_package(imgui CONFIG REQUIRED)
 
-add_executable(${PROJECT_NAME}  src/gui.cpp)
+add_executable(${PROJECT_NAME}  
+"src/gui.cpp"
+"src/backtester.hpp"
+"src/backtester.cpp"
+)
+
 
 target_link_libraries(${PROJECT_NAME}
     PRIVATE 
