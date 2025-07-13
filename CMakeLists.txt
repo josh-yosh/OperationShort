@@ -5,8 +5,8 @@ set(CMAKE_CXX_STANDARD 17)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 
 set(CMAKE_PREFIX_PATH 
-    ${CMAKE_SOURCE_DIR}/vcpkg_installed/arm64-osx
-    ${CMAKE_CURRENT_SOURCE_DIR}/src/imgui
+    ${CMAKE_SOURCE_DIR}/vcpkg_installed/arm64-osx/include()
+
 ) 
 
 include_directories(${CMAKE_CURRENT_SOURCE_DIR}/src/imgui)
@@ -22,10 +22,13 @@ add_executable(${PROJECT_NAME}
     "src/backtester.cpp"
     # src/imgui/imgui_impl_glfw.cpp
     # src/imgui/imgui_impl_opengl3.cpp
+    "src/imGuiFunction.cpp"
+    "src/backtester.cpp"
+    "src/OperationShortApplication.cpp"
+    "src/Portfolio.cpp"
+    "src/Strategy.cpp"
+    "src/UsingImGui.h"
 )
-
-    
-    
 
 target_link_libraries(${PROJECT_NAME}
     PRIVATE 
