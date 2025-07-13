@@ -82,15 +82,25 @@ int main() {
 
         //----------------------------------------------------------------------------
 
-        ImGui::SetNextWindowSizeConstraints(ImVec2(1200,800), ImVec2(1200,800));
-        ImGui::SetNextWindowPos(ImVec2(100, 0), ImGuiCond_Once);
+        ImGui::SetNextWindowSizeConstraints(ImVec2(1100,800), ImVec2(1100,800));
+        ImGui::SetNextWindowPos(ImVec2(75, 0), ImGuiCond_Once);
+
         ImGui::Begin("Graph");
+
+        ImGui::PushStyleColor(ImGuiCol_Border, ImVec4(1.0f, 1.0f, 1.0f, 1.0f));
+        ImGui::BeginChild("Graph of Price", ImVec2(1085, 760), ImGuiChildFlags_Borders);
+        
+
+
+        ImGui::PopStyleColor();
+        ImGui::EndChild();
 
         ImGui::End();
 
+
         //----------------------------------------------------------------------------
 
-        ImGui::SetNextWindowSizeConstraints(ImVec2(300,800), ImVec2(300,800));   //changes window size constraing
+        ImGui::SetNextWindowSizeConstraints(ImVec2(325,800), ImVec2(325,800));   //changes window size constraing
         ImGui::SetNextWindowPos(ImVec2(1200, 0), ImGuiCond_Once);
         ImGui::Begin("Log");                          // Create a window called "Conan Logo" and append into it.
 
@@ -103,17 +113,22 @@ int main() {
         ImGui::Text("SYMBOL: APPL");
         ImGui::PopFont();
        
-        ImGui::BeginChild("Scrolling");
+
+        ImGui::PushStyleColor(ImGuiCol_ChildBg, ImVec4(0.1f, 0.1f, 0.1f, 1.0f));
+        ImGui::PushStyleColor(ImGuiCol_Border, ImVec4(1.0f, 1.0f, 1.0f, 1.0f));
+        ImGui::BeginChild("Scrolling", ImVec2(300, 725), ImGuiChildFlags_Borders);
 
         ImGui::PopFont();
         ImGui::PushFont(logText);
         ImGui::PushStyleColor(ImGuiCol_Text, ImVec4(0.0f, 1.0f, 0.0f, 1.0f));
         for (int n = 0; n < 50; n++)
-            ImGui::Text("%04d: 5 Shares APPLE @ 5.42", n);
+            ImGui::Text("%02d:%02d:%02d - 5 Shares APPLE @ 5.42", n, n, n);
 
         ImGui::PopStyleColor();
         ImGui::PopFont();
 
+        ImGui::PopStyleColor();
+        ImGui::PopStyleColor(); //poping child background
         ImGui::EndChild();
 
         ImGui::End();
