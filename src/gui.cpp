@@ -22,7 +22,7 @@ int main() {
     glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 4);
     glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 1);
 
-    GLFWwindow* window = glfwCreateWindow(600, 600, "Backtester", NULL, NULL);
+    GLFWwindow* window = glfwCreateWindow(1200, 600, "Backtester", NULL, NULL);
     if (!window) {
         std::cerr << "Failed to create GLFW window\n";
         glfwTerminate();
@@ -47,7 +47,6 @@ int main() {
 
     IMGUI_CHECKVERSION();
     ImGui::CreateContext();
-    ImGui::CreateContext();
     ImGuiIO &io = ImGui::GetIO();
     
 
@@ -58,8 +57,11 @@ int main() {
 
     //AddFontFromFileTTF(const char* filename, float size_pixels, const ImFontConfig* font_cfg = NULL, const ImWchar* glyph_ranges = NULL);
     static ImFont* defaultFont = io.Fonts->AddFontDefault();
-    static ImFont* bigFont = io.Fonts->AddFontFromFileTTF("./fonts/ProggyClean.ttf", 24.0f);
+    static ImFont* logText = io.Fonts->AddFontFromFileTTF("./fonts/ProggyClean.ttf", 16.0f);
+    static ImFont* headerFont = io.Fonts->AddFontFromFileTTF("./fonts/ProggyClean.ttf", 36.0f);
+
     io.Fonts->Build();
+
 
 
     while (!glfwWindowShouldClose(window)) {
@@ -69,34 +71,54 @@ int main() {
         // myimgui.NewFrame();
 
          // feed inputs to dear imgui, start new frame
+        ImGui::LoadIniSettingsFromDisk("../my_ui_layout.ini");
         ImGui_ImplOpenGL3_NewFrame();
         ImGui_ImplGlfw_NewFrame();
         ImGui::NewFrame();
 
-        // myimgui.Update();        
-        ImGui::Begin("Graph");                          // Create a window called "Conan Logo" and append into it.
+        // myimgui.Update();     
+        
+        //graph window
+
+        //----------------------------------------------------------------------------
+
+        ImGui::SetNextWindowSizeConstraints(ImVec2(1200,800), ImVec2(1200,800));
+        ImGui::SetNextWindowPos(ImVec2(100, 0), ImGuiCond_Once);
+        ImGui::Begin("Graph");
+
+        ImGui::End();
+
+        //----------------------------------------------------------------------------
+
+        ImGui::SetNextWindowSizeConstraints(ImVec2(300,800), ImVec2(300,800));   //changes window size constraing
+        ImGui::SetNextWindowPos(ImVec2(1200, 0), ImGuiCond_Once);
+        ImGui::Begin("Log");                          // Create a window called "Conan Logo" and append into it.
 
         ImGui::PushFont(defaultFont);
-        bool show_demo_window = true;
-        
-        ImGui::ShowDemoWindow(&show_demo_window);
-        ImGui::ShowStyleEditor(&(ImGui::GetStyle()));
-        
-        ImGui::Text("STOCK: ");
+        // bool show_demo_window = false;
+        // ImGui::ShowDemoWindow(&show_demo_window);
+
+        // ImGui::ShowStyleEditor(&(ImGui::GetStyle()));
+        ImGui::PushFont(headerFont);
+        ImGui::Text("SYMBOL: APPL");
+        ImGui::PopFont();
+       
         ImGui::BeginChild("Scrolling");
 
         ImGui::PopFont();
-        ImGui::PushFont(bigFont);
+        ImGui::PushFont(logText);
+        ImGui::PushStyleColor(ImGuiCol_Text, ImVec4(0.0f, 1.0f, 0.0f, 1.0f));
         for (int n = 0; n < 50; n++)
-            ImGui::Text("%04d: Some text", n);
+            ImGui::Text("%04d: 5 Shares APPLE @ 5.42", n);
 
+        ImGui::PopStyleColor();
         ImGui::PopFont();
+
         ImGui::EndChild();
 
         ImGui::End();
 
-
-
+        //----------------------------------------------------------------------------
 
         // myimgui.Render();
         ImGui::Render();
