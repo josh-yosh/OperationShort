@@ -1,4 +1,7 @@
 #define GLFW_INCLUDE_NONE
+#include "imgui_impl_glfw.h"
+#include "imgui_impl_opengl3.h"
+
 #include <GLFW/glfw3.h>
 #include <glad/glad.h>
 #include <iostream>
@@ -22,6 +25,7 @@ int main() {
     }
 
     glfwMakeContextCurrent(window);
+    // ImGui::StyleColorsDark();
 
     // Initialize GLAD **after** context creation
     if (!gladLoadGLLoader((GLADloadproc)glfwGetProcAddress)) {

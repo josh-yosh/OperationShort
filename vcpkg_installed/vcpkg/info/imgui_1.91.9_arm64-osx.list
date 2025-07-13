@@ -5,6 +5,9 @@ arm64-osx/debug/lib/libimguid.a
 arm64-osx/include/
 arm64-osx/include/imconfig.h
 arm64-osx/include/imgui.h
+arm64-osx/include/imgui_impl_glfw.h
+arm64-osx/include/imgui_impl_opengl3.h
+arm64-osx/include/imgui_impl_opengl3_loader.h
 arm64-osx/include/imgui_internal.h
 arm64-osx/include/imgui_stdlib.h
 arm64-osx/include/imstb_rectpack.h

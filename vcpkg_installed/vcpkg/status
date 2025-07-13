@@ -62,7 +62,22 @@ Version: 1.91.9
 Depends: vcpkg-cmake, vcpkg-cmake-config
 Architecture: arm64-osx
 Multi-Arch: same
-Abi: a4fa6064e65f2c8782f64e68e89e930acf7c33ff0675e75cb2990ce1b1c4c322
+Abi: ab16650f30a11c7b7d46d23382be6e2cc7e63e01129c759e5e1d4aea05688737
 Description: Bloat-free Immediate Mode Graphical User interface for C++ with minimal dependencies.
+Status: install ok installed
+
+Package: imgui
+Feature: glfw-binding
+Depends: glfw3
+Architecture: arm64-osx
+Multi-Arch: same
+Description: Make available GLFW binding
+Status: install ok installed
+
+Package: imgui
+Feature: opengl3-binding
+Architecture: arm64-osx
+Multi-Arch: same
+Description: Make available OpenGL3/ES/ES2 (modern) binding
 Status: install ok installed
 
