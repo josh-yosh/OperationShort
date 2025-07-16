@@ -1,6 +1,5 @@
 #include <iostream>
 #include "OrderTypeEnum.hpp"
-#include "SymbolEnum.hpp"
 #include <vector>
 #include <chrono>
 #include <string>
@@ -14,7 +13,7 @@ struct Position //represents an action/order made by the bot
     OrderType order; //either buying, selling, limiting
     int positionSize; 
     int individualPrice; 
-    Symbol tickerSymbol; 
+    string tickerSymbol; 
 }; 
 
 struct minuteTickerInfo {
@@ -24,9 +23,6 @@ struct minuteTickerInfo {
     double close;
     string time;
 };
-
-
-
 
 class Backtester //keep in mind market opens 9:30am EST and closes 4pm EST
 {
@@ -41,12 +37,12 @@ class Backtester //keep in mind market opens 9:30am EST and closes 4pm EST
     bool timeEnd;
 
     Position position; 
-    Symbol tickerSymbol;
+    string tickerSymbol;
     vector<minuteTickerInfo> dayInfo;
     std::chrono::steady_clock::time_point startTime;
 
     public: 
-        Backtester(int timeRatioMsToSec, Symbol tickerSymbol, int year, int month, int day, bool timeEnd); //will hold all the information such as starting time upon initialization
+        Backtester(int timeRatioMsToSec, string tickerSymbol, int year, int month, int day, bool timeEnd); //will hold all the information such as starting time upon initialization
 
         void simulateMinute(string csvName); //if ratio has passed then add information to portfolio
         void pushToDayInfo(minuteTickerInfo minuteInfo); //pushed information to the vector which will be what the graph is made of

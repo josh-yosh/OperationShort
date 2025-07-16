@@ -1,6 +1,5 @@
 #include "backtester.hpp"
 #include "OrderTypeEnum.hpp"
-#include "SymbolEnum.hpp"
 #include <chrono>
 #include <vector>
 #include <fstream>
@@ -12,7 +11,7 @@ using namespace std::chrono;
 using namespace std;
 
 
-Backtester::Backtester(int timeRatioMsToSec, Symbol tickerSymbol, int simulatedYear, int simulatedMonth, int simulatedDay, bool timeEnd)
+Backtester::Backtester(int timeRatioMsToSec, string tickerSymbol, int simulatedYear, int simulatedMonth, int simulatedDay, bool timeEnd)
     : timeRatioMsToSec(timeRatioMsToSec), tickerSymbol(tickerSymbol), simulatedYear(simulatedYear), simulatedMonth(simulatedMonth), simulatedDay(simulatedDay), simulatedHour(13), simulatedMin(0), timeEnd(timeEnd)
 { //need to add algorithm in later as parameter
     startTime = steady_clock::now();
@@ -44,7 +43,8 @@ char* Backtester::getFullDate(){
     char* fullDate;
     //2025-07-11 13:35:00+00:00
     //year-month-day hour:minute:second+(hours offset of utc):(minutes offset of utc)
-    sprintf(fullDate, "%04d-%02d-%02d %02d:%02d:00+00:00", this->simulatedYear, this->simulatedMonth, this->simulatedDay, this->simulatedHour, this->simulatedMin);
+    int sizeOfFullDate = 26; //25 + null terminator
+    snprintf(fullDate, 26, "%04d-%02d-%02d %02d:%02d:00+00:00", this->simulatedYear, this->simulatedMonth, this->simulatedDay, this->simulatedHour, this->simulatedMin);
     return fullDate;
 }
 
@@ -85,6 +85,7 @@ minuteTickerInfo Backtester::pullMinuteTickerInfo(string csvName){
     // as String Vector
     vector<string> row;
     string line, word, temp;
+    minuteTickerInfo minuteInfo;
 
     while (fin >> temp)
     {
@@ -119,7 +120,6 @@ minuteTickerInfo Backtester::pullMinuteTickerInfo(string csvName){
             cout << "Open: " << row[4] << "\n";
             cout << "Volume: " << row[5] << "\n";
 
-            minuteTickerInfo minuteInfo;
             minuteInfo.time = row[0];
             minuteInfo.close = stod(row[1]);
             minuteInfo.high = stod(row[2]);
@@ -132,6 +132,8 @@ minuteTickerInfo Backtester::pullMinuteTickerInfo(string csvName){
     if (count == 0)
         cout << "Record not found\n";
     fin.close();
+
+    return minuteInfo;
 }
 
 

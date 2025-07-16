@@ -11,4 +11,7 @@ public:
     virtual void Update();
     void Render();
     void Shutdown();
+    void graphWindow();
+    void logWindow(ImFont* defaultFont, ImFont* headerFont, ImFont* logText);
+    void plWindow(ImFont* headerFont);
 };

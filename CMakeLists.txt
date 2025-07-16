@@ -17,13 +17,10 @@ find_package(glad CONFIG REQUIRED)
 find_package(imgui CONFIG REQUIRED)
 
 add_executable(${PROJECT_NAME}  
-    "src/gui.cpp"
+    "src/backtester.cpp"
     "src/backtester.hpp"
-    "src/backtester.cpp"
-    # src/imgui/imgui_impl_glfw.cpp
-    # src/imgui/imgui_impl_opengl3.cpp
+    "src/gui.cpp"
     "src/imGuiFunction.cpp"
-    "src/backtester.cpp"
     "src/OperationShortApplication.cpp"
     "src/Portfolio.cpp"
     "src/Strategy.cpp"
