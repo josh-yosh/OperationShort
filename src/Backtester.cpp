@@ -1,53 +1,137 @@
 #include "backtester.hpp"
+#include "OrderTypeEnum.hpp"
+#include "SymbolEnum.hpp"
+#include <chrono>
+#include <vector>
+#include <fstream>
+#include <iostream>
+#include <sstream>
+#include <string>
+
+using namespace std::chrono;
+using namespace std;
 
 
-Backtester::Backtester(int hour, int min, int sec, double stockP)
-{
-    currentTimeHour = hour; 
-    currentTimeMin = min; 
-    currentTimeSec = sec; 
-    stockPrice = stockP; 
+Backtester::Backtester(int timeRatioMsToSec, Symbol tickerSymbol, int simulatedYear, int simulatedMonth, int simulatedDay, bool timeEnd)
+    : timeRatioMsToSec(timeRatioMsToSec), tickerSymbol(tickerSymbol), simulatedYear(simulatedYear), simulatedMonth(simulatedMonth), simulatedDay(simulatedDay), simulatedHour(13), simulatedMin(0), timeEnd(timeEnd)
+{ //need to add algorithm in later as parameter
+    startTime = steady_clock::now();
 }
 
-double Backtester::sendTickPrice(Symbol symbol)
-{
-    return 2.0; //temporary hold
+void Backtester::simulateMinute(string csvName){
+    //msToVirtualSecond == value of variable is #ms per virtual simulated second.
+
+    if(timeRatioSatifisfied() && !timeEnd){
+        pushToDayInfo(pullMinuteTickerInfo(csvName));
+    }
+
 }
 
-void Backtester::simulateNextSecond()
-{
-    currentTimeSec++; 
+//time functions
+
+auto Backtester::getElapsedTime(){
+    auto end = steady_clock::now();
+    auto start = this->startTime;
+    return std::chrono::duration_cast<std::chrono::milliseconds>(end - start);
 }
-void Backtester::simulateNextMin()
-{
-    currentTimeMin++; 
+
+bool Backtester::timeRatioSatifisfied(){
+    bool ratioSatisfied = ((this->getElapsedTime().count()%this->timeRatioMsToSec) == 0);
+    return ratioSatisfied;
 }
-void Backtester::simulateNextHour()
-{
-    currentTimeHour++; 
+
+char* Backtester::getFullDate(){
+    char* fullDate;
+    //2025-07-11 13:35:00+00:00
+    //year-month-day hour:minute:second+(hours offset of utc):(minutes offset of utc)
+    sprintf(fullDate, "%04d-%02d-%02d %02d:%02d:00+00:00", this->simulatedYear, this->simulatedMonth, this->simulatedDay, this->simulatedHour, this->simulatedMin);
+    return fullDate;
 }
-int Backtester::getCurrentTimeHour()
-{
-    return currentTimeHour; 
+
+//pulling market info functions
+
+void Backtester::pushToDayInfo(minuteTickerInfo minuteInfo){
+    this->dayInfo.push_back(minuteInfo); 
 }
-int Backtester::getCurrentTimeMin()
-{  
-    return currentTimeMin; 
+
+void Backtester::incrementSimulatedMinute(){
+    if(simulatedHour == 20){
+        timeEnd = true;
+    }else if(simulatedMin == 59){
+        simulatedHour++;
+        simulatedMin = 0;
+    } else {
+        simulatedMin++;
+    }
 }
-int Backtester::getCurrentTimeSec()
-{   
-    return currentTimeSec; 
+
+minuteTickerInfo Backtester::pullMinuteTickerInfo(string csvName){
+    // File pointer
+    fstream fin;
+
+    //getting current time 
+    string fullDate = this->getFullDate();
+
+    // Open an existing file
+    fin.open("APPL_Data.csv", ios::in);
+
+
+    // Get the roll number
+    // of which the data is required
+    int count = 0;
+    
+
+    // Read the Data from the file
+    // as String Vector
+    vector<string> row;
+    string line, word, temp;
+
+    while (fin >> temp)
+    {
+
+        row.clear();
+
+        // read an entire row and
+        // store it in a string variable 'line'
+        getline(fin, line);
+
+        // used for breaking words
+        stringstream s(line);
+
+        // read every column data of a row and
+        // store it in a string variable, 'word'
+        while (getline(s, word, ','))
+        {
+            // add all the column data
+            // of a row to a vector
+            row.push_back(word);
+        }
+
+        // Compare the roll number
+        if (row[0] == fullDate)
+        {
+            // Print the found data
+            count = 1;
+            cout << "time: " << row[0] << " : \n";
+            cout << "Close: " << row[1] << "\n";
+            cout << "High: " << row[2] << "\n";
+            cout << "Low: " << row[3] << "\n";
+            cout << "Open: " << row[4] << "\n";
+            cout << "Volume: " << row[5] << "\n";
+
+            minuteTickerInfo minuteInfo;
+            minuteInfo.time = row[0];
+            minuteInfo.close = stod(row[1]);
+            minuteInfo.high = stod(row[2]);
+            minuteInfo.low = stod(row[3]);
+            minuteInfo.open = stod(row[4]);
+            minuteInfo.open = stod(row[5]);
+            return minuteInfo;
+        }
+    }
+    if (count == 0)
+        cout << "Record not found\n";
+    fin.close();
 }
-int Backtester::getCurrentTimeFull()
-{
-    return 120000; //temporary hold
-}
-double Backtester::sendSoldPrice()
-{
-    return stockPrice;
-}
-double Backtester::sendBoughtPrice()
-{
-    return stockPrice; 
-}
+
 
