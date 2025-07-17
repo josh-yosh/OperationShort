@@ -97,7 +97,7 @@ int main() {
 
         ImGui::PushStyleColor(ImGuiCol_Border, ImVec4(1.0f, 1.0f, 1.0f, 1.0f));
         ImGui::BeginChild("Graph of Price", ImVec2(1085, 760), ImGuiChildFlags_Borders);
-        
+        myimgui.makeGraph();
 
 
         ImGui::PopStyleColor();

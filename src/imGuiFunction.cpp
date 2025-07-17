@@ -121,3 +121,58 @@ void UseImGui::Shutdown(){
 	ImGui_ImplGlfw_Shutdown();
 	ImGui::DestroyContext();
 };
+
+void UseImGui::makeGraph(){
+    ImDrawList *draw_list = ImGui::GetWindowDrawList();
+    
+    int xPosOfLeft = 125;
+    int yPosOfBottom = 725;
+    int xPosOfRight = 1150;
+    int yPosOfTop = 50;
+    int xNumOfIndents = 13;
+    int yNumOfIndents = 5;
+
+    ImVec2 bottomLeftCorner(xPosOfLeft, yPosOfBottom);  //veritcal line = 675
+    ImVec2 bottomRightCorner(xPosOfRight, yPosOfBottom); //horizontal line = 1025 long
+    ImVec2 topLeftCorner(xPosOfLeft,yPosOfTop);
+
+    ImVec4 white(1.0f, 1.0f, 1.0f, 1.0f);
+
+    //for the little indents 
+    
+    int widthBetweenIndents = (xPosOfRight-xPosOfLeft)/xNumOfIndents;
+    int xPosOfIndent = xPosOfLeft;
+
+    int heightBetweenIndents = (yPosOfBottom-yPosOfTop)/yNumOfIndents;
+    int yPosOfIndent = yPosOfBottom;
+
+    // ImVec2 topOfIndent()
+
+    draw_list->AddLine(bottomLeftCorner, bottomRightCorner, ImColor(white), 3.0f);
+    draw_list->AddLine(bottomLeftCorner, topLeftCorner, ImColor(white), 3.0f);
+
+    // 13 half hours in a market order
+
+    for(int indentNum = 1; indentNum <= xNumOfIndents; indentNum++){
+
+        ImVec2 topIndent(xPosOfIndent + widthBetweenIndents*(indentNum), (yPosOfBottom + 10));
+        ImVec2 bottomIndent(xPosOfIndent + widthBetweenIndents*(indentNum), (yPosOfBottom - 10));
+
+        draw_list->AddLine(topIndent, bottomIndent, ImColor(white), 3.0f);
+    }
+
+    for(int indentNum = 1; indentNum <= yNumOfIndents; indentNum++){
+
+        ImVec2 leftIndent((xPosOfLeft - 10), yPosOfBottom - heightBetweenIndents*(indentNum));
+        ImVec2 rightIndent((xPosOfLeft + 10), yPosOfBottom - heightBetweenIndents*(indentNum));
+
+        draw_list->AddLine(leftIndent, rightIndent, ImColor(white), 3.0f);
+    }
+}
+
+void UseImGui::plotPoint(int xPosOfLeft, int yPosOfBottom, int xPosOfRight, int yPosOfTop){
+    int widthOfGraph = xPosOfRight - xPosOfLeft;
+    int heightOfGraph = yPosOfBottom - yPosOfTop;
+    int pixelsPerMinute = widthOfGraph / (int (6.5 * 60));
+
+}
