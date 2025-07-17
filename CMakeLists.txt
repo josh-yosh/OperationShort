@@ -9,7 +9,10 @@ set(CMAKE_PREFIX_PATH
 
 ) 
 
-include_directories(${CMAKE_CURRENT_SOURCE_DIR}/src/imgui)
+include_directories(
+    ${CMAKE_CURRENT_SOURCE_DIR}/src/imgui
+    ${CMAKE_CURRENT_SOURCE_DIR}/src
+)
 
 
 find_package(glfw3 CONFIG REQUIRED)

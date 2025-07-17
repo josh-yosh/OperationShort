@@ -11,8 +11,8 @@ using namespace std::chrono;
 using namespace std;
 
 
-Backtester::Backtester(int timeRatioMsToSec, string tickerSymbol, int simulatedYear, int simulatedMonth, int simulatedDay, bool timeEnd)
-    : timeRatioMsToSec(timeRatioMsToSec), tickerSymbol(tickerSymbol), simulatedYear(simulatedYear), simulatedMonth(simulatedMonth), simulatedDay(simulatedDay), simulatedHour(13), simulatedMin(0), timeEnd(timeEnd)
+Backtester::Backtester(int timeRatioMsToSec, string tickerSymbol, int simulatedYear, int simulatedMonth, int simulatedDay)
+    : timeRatioMsToSec(timeRatioMsToSec), tickerSymbol(tickerSymbol), simulatedYear(simulatedYear), simulatedMonth(simulatedMonth), simulatedDay(simulatedDay), simulatedHour(13), simulatedMin(30), timeEnd(false)
 { //need to add algorithm in later as parameter
     startTime = steady_clock::now();
 }
@@ -20,27 +20,30 @@ Backtester::Backtester(int timeRatioMsToSec, string tickerSymbol, int simulatedY
 void Backtester::simulateMinute(string csvName){
     //msToVirtualSecond == value of variable is #ms per virtual simulated second.
 
+    cout<< (timeRatioSatifisfied() && !timeEnd) << "\n";
     if(timeRatioSatifisfied() && !timeEnd){
+        cout << "here 3\n";
         pushToDayInfo(pullMinuteTickerInfo(csvName));
+        this->incrementSimulatedMinute();
     }
 
 }
 
 //time functions
 
-auto Backtester::getElapsedTime(){
+auto Backtester::getElapsedTime(){ //works
     auto end = steady_clock::now();
     auto start = this->startTime;
     return std::chrono::duration_cast<std::chrono::milliseconds>(end - start);
 }
 
-bool Backtester::timeRatioSatifisfied(){
+bool Backtester::timeRatioSatifisfied(){ //works
     bool ratioSatisfied = ((this->getElapsedTime().count()%this->timeRatioMsToSec) == 0);
     return ratioSatisfied;
 }
 
 char* Backtester::getFullDate(){
-    char* fullDate;
+    char* fullDate = (char*)malloc(sizeof(char) * 26);
     //2025-07-11 13:35:00+00:00
     //year-month-day hour:minute:second+(hours offset of utc):(minutes offset of utc)
     int sizeOfFullDate = 26; //25 + null terminator
@@ -65,6 +68,14 @@ void Backtester::incrementSimulatedMinute(){
     }
 }
 
+minuteTickerInfo Backtester::sendRecentMinuteTickerInfo(){
+    return dayInfo.back();
+}
+
+vector<minuteTickerInfo> Backtester::getDayInfo(){
+    return dayInfo;
+}
+
 minuteTickerInfo Backtester::pullMinuteTickerInfo(string csvName){
     // File pointer
     fstream fin;
@@ -73,7 +84,7 @@ minuteTickerInfo Backtester::pullMinuteTickerInfo(string csvName){
     string fullDate = this->getFullDate();
 
     // Open an existing file
-    fin.open("APPL_Data.csv", ios::in);
+    fin.open("src/tickerData/AAPL_data.csv", ios::in);
 
 
     // Get the roll number
@@ -86,47 +97,49 @@ minuteTickerInfo Backtester::pullMinuteTickerInfo(string csvName){
     vector<string> row;
     string line, word, temp;
     minuteTickerInfo minuteInfo;
+    getline(fin, line);
 
-    while (fin >> temp)
+    while (getline(fin, line))
     {
-
+        
         row.clear();
 
-        // read an entire row and
-        // store it in a string variable 'line'
-        getline(fin, line);
-
         // used for breaking words
-        stringstream s(line);
+        stringstream ss(line);
 
         // read every column data of a row and
         // store it in a string variable, 'word'
-        while (getline(s, word, ','))
-        {
+        string substr;
+
+        while (getline(ss, substr, ',')){
+            
+            cout << substr << "\n";
             // add all the column data
             // of a row to a vector
-            row.push_back(word);
+            row.push_back(substr);
         }
 
+        cout << "hell0 \n";
+        
         // Compare the roll number
         if (row[0] == fullDate)
         {
             // Print the found data
             count = 1;
-            cout << "time: " << row[0] << " : \n";
-            cout << "Close: " << row[1] << "\n";
-            cout << "High: " << row[2] << "\n";
-            cout << "Low: " << row[3] << "\n";
-            cout << "Open: " << row[4] << "\n";
-            cout << "Volume: " << row[5] << "\n";
 
             minuteInfo.time = row[0];
             minuteInfo.close = stod(row[1]);
             minuteInfo.high = stod(row[2]);
             minuteInfo.low = stod(row[3]);
             minuteInfo.open = stod(row[4]);
-            minuteInfo.open = stod(row[5]);
-            return minuteInfo;
+
+            cout << "time: " <<  minuteInfo.time << " : \n";
+            cout << "Close: " << minuteInfo.close << "\n";
+            cout << "High: " << minuteInfo.high << "\n";
+            cout << "Low: " << minuteInfo.low << "\n";
+            cout << "Open: " << minuteInfo.open << "\n";
+
+            break;
         }
     }
     if (count == 0)

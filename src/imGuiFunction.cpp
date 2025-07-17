@@ -9,11 +9,7 @@ void UseImGui::Init(GLFWwindow* window, const char* glsl_version){
     ImGuiIO &io = ImGui::GetIO();
     
 
-    // Setup Platform/RendererBindings
-    ImGui_ImplGlfw_InitForOpenGL(window, true);
-    ImGui_ImplOpenGL3_Init(glsl_version);
-
-
+   
 };
 
 void UseImGui::NewFrame(){

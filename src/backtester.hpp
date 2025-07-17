@@ -1,3 +1,5 @@
+#pragma once
+
 #include <iostream>
 #include "OrderTypeEnum.hpp"
 #include <vector>
@@ -26,28 +28,17 @@ struct minuteTickerInfo {
 
 class Backtester //keep in mind market opens 9:30am EST and closes 4pm EST
 {
-    int simulatedYear;
-    int simulatedMonth;
-    int simulatedDay;
-    int simulatedHour; 
-    int simulatedMin; 
-
-    int timeRatioMsToSec; 
-    double stockPrice;
-    bool timeEnd;
-
-    Position position; 
-    string tickerSymbol;
-    vector<minuteTickerInfo> dayInfo;
-    std::chrono::steady_clock::time_point startTime;
+    
 
     public: 
-        Backtester(int timeRatioMsToSec, string tickerSymbol, int year, int month, int day, bool timeEnd); //will hold all the information such as starting time upon initialization
+        Backtester(int timeRatioMsToSec, string tickerSymbol, int year, int month, int day); //will hold all the information such as starting time upon initialization
 
         void simulateMinute(string csvName); //if ratio has passed then add information to portfolio
         void pushToDayInfo(minuteTickerInfo minuteInfo); //pushed information to the vector which will be what the graph is made of
 
-        minuteTickerInfo pullMinuteTickerInfo(string csvName); 
+        minuteTickerInfo pullMinuteTickerInfo(string csvName);
+        
+        vector<minuteTickerInfo> getDayInfo();
 
         char* getFullDate();
 
@@ -55,7 +46,23 @@ class Backtester //keep in mind market opens 9:30am EST and closes 4pm EST
         bool timeRatioSatifisfied();
 
         void incrementSimulatedMinute();
+        minuteTickerInfo sendRecentMinuteTickerInfo();
 
-    
+    private:
+        int simulatedYear;
+        int simulatedMonth;
+        int simulatedDay;
+        int simulatedHour; 
+        int simulatedMin; 
+
+        int timeRatioMsToSec; 
+        double stockPrice;
+        bool timeEnd;
+
+        Position position; 
+        string tickerSymbol;
+        vector<minuteTickerInfo> dayInfo;
+        std::chrono::steady_clock::time_point startTime;
+
 }; 
 
