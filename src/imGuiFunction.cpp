@@ -41,8 +41,6 @@ void UseImGui::graphWindow(){
     ImGui::PushStyleColor(ImGuiCol_Border, ImVec4(1.0f, 1.0f, 1.0f, 1.0f));
     ImGui::BeginChild("Graph of Price", ImVec2(1085, 760), ImGuiChildFlags_Borders);
     
-
-
     ImGui::PopStyleColor();
     ImGui::EndChild();
 
@@ -50,6 +48,8 @@ void UseImGui::graphWindow(){
 }
 
 void UseImGui::logWindow(ImFont* defaultFont, ImFont* headerFont, ImFont* logText){
+
+    // io.Fonts->Build(); //need to do this,
 
     ImGui::SetNextWindowSizeConstraints(ImVec2(300,800), ImVec2(300,800));   //changes window size constraing
     ImGui::SetNextWindowPos(ImVec2(1250, 0), ImGuiCond_Once);

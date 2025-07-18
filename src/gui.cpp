@@ -15,14 +15,19 @@ using namespace std;
 
 int main() {
     
+    //initializes GLFW ----------------------------------------------------------
     if (!glfwInit()) {
         std::cerr << "Failed to initialize GLFW\n";
         return -1;
     }
 
+    //looks for minimum veresion -------------------------------------------------
+
     const char *glsl_version = "#version 410";
     glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 4);
     glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 1);
+
+    // creates GLFW WINDOW ------------------------------------------------------
 
     GLFWwindow* window = glfwCreateWindow(1200, 600, "Backtester", NULL, NULL);
     if (!window) {
@@ -31,8 +36,11 @@ int main() {
         return -1;
     }
 
+    // creating context for window ----------------------------------------------
+
     glfwMakeContextCurrent(window);
     glfwSwapInterval(1); 
+
 
     // Initialize GLAD **after** context creation
     if (!gladLoadGLLoader((GLADloadproc)glfwGetProcAddress)) {
@@ -40,12 +48,15 @@ int main() {
         return -1;
     }
 
+    // creating context for window ----------------------------------------------
+
     int screen_width, screen_height;
 	glfwGetFramebufferSize(window, &screen_width, &screen_height);
 	glViewport(0, 0, screen_width, screen_height);
 
+    //setting up context, io, and  myimgui object -------------------------------
+
     UseImGui myimgui;
-    // myimgui.Init(window, glsl_version);
 
     IMGUI_CHECKVERSION();
     ImGui::CreateContext();
@@ -57,6 +68,7 @@ int main() {
     ImGui_ImplOpenGL3_Init(glsl_version);
 
 
+    //---------------------------------------------------------------------------
     //AddFontFromFileTTF(const char* filename, float size_pixels, const ImFontConfig* font_cfg = NULL, const ImWchar* glyph_ranges = NULL);
 
     static ImFont* defaultFont = io.Fonts->AddFontDefault();
@@ -65,8 +77,12 @@ int main() {
     
     io.Fonts->Build();
 
+    //backtester instance---------------------------------------------------------
     //ms ratio, symbol, year, month, day
     Backtester backtesterInstance(10, "APPL", 2025, 7, 11);
+
+
+    //while loop ---------------------------------------------------------
 
     while (!glfwWindowShouldClose(window)) {
         glfwPollEvents();
