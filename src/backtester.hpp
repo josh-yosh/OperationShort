@@ -39,10 +39,14 @@ class Backtester //keep in mind market opens 9:30am EST and closes 4pm EST
         minuteTickerInfo pullMinuteTickerInfo(string csvName);
         
         vector<minuteTickerInfo> getDayInfo();
-
+        double getDayMinimum();
+        double getDayMaximum();
+        int getTotalNumOfMinutes();
         char* getFullDate();
-
         auto getElapsedTime();
+
+        void setInitialMinAndMax(minuteTickerInfo tempTickerInfo);
+
         bool timeRatioSatifisfied();
 
         void incrementSimulatedMinute();
@@ -54,6 +58,11 @@ class Backtester //keep in mind market opens 9:30am EST and closes 4pm EST
         int simulatedDay;
         int simulatedHour; 
         int simulatedMin; 
+
+        int totalNumOfMinutes;
+
+        double dayMinimum;
+        double dayMaximum;
 
         int timeRatioMsToSec; 
         double stockPrice;

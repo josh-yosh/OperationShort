@@ -7,10 +7,23 @@ void UseImGui::Init(GLFWwindow* window, const char* glsl_version){
     ImGui::CreateContext();
     ImGui::CreateContext();
     ImGuiIO &io = ImGui::GetIO();
-    
-
-   
 };
+
+UseImGui::UseImGui(){
+    xPosOfYaxis = 5;
+    yPosOfXaxis = 725;
+    xPosOfXaxisEnd = 1175;
+    yPosOfYaxisEnd = 50;
+    xNumOfIndents = 13;
+    widthOfGraph = xPosOfXaxisEnd - xPosOfYaxis;
+    heightOfGraph = yPosOfXaxis - yPosOfYaxisEnd;
+    widthPixelsPerMinute = widthOfGraph / (int (6.5 * 60));
+    
+    cout << widthOfGraph << "\n";
+    cout << int (6.5 * 60) << "\n";
+    cout <<widthPixelsPerMinute << "\n";
+    
+}
 
 void UseImGui::NewFrame(){
     // feed inputs to dear imgui, start new frame
@@ -20,8 +33,8 @@ void UseImGui::NewFrame(){
 }
 
 void UseImGui::graphWindow(){
-    ImGui::SetNextWindowSizeConstraints(ImVec2(1100,800), ImVec2(1100,800));
-    ImGui::SetNextWindowPos(ImVec2(75, 0), ImGuiCond_Once);
+    ImGui::SetNextWindowSizeConstraints(ImVec2(1100,800), ImVec2(1175,800));
+    ImGui::SetNextWindowPos(ImVec2(0, 0), ImGuiCond_Once);
 
     ImGui::Begin("Graph");
 
@@ -38,8 +51,8 @@ void UseImGui::graphWindow(){
 
 void UseImGui::logWindow(ImFont* defaultFont, ImFont* headerFont, ImFont* logText){
 
-    ImGui::SetNextWindowSizeConstraints(ImVec2(325,800), ImVec2(325,800));   //changes window size constraing
-    ImGui::SetNextWindowPos(ImVec2(1200, 0), ImGuiCond_Once);
+    ImGui::SetNextWindowSizeConstraints(ImVec2(300,800), ImVec2(300,800));   //changes window size constraing
+    ImGui::SetNextWindowPos(ImVec2(1250, 0), ImGuiCond_Once);
     ImGui::Begin("Log");                          // Create a window called "Conan Logo" and append into it.
 
     ImGui::PushFont(defaultFont);
@@ -122,29 +135,33 @@ void UseImGui::Shutdown(){
 	ImGui::DestroyContext();
 };
 
-void UseImGui::makeGraph(){
+void UseImGui::makeGraph(Backtester backtesterInstance){
+    const ImVec2 centerScreen = ImGui::GetCursorScreenPos();
+    xPosOfYaxis = 5 + centerScreen.x;
+    yPosOfXaxis = 725 + centerScreen.y;
+    xPosOfXaxisEnd = 1175 + centerScreen.x;
+    yPosOfYaxisEnd = 50 + centerScreen.y;
+
+    ImVec2 bottomLeftCorner(xPosOfYaxis, yPosOfXaxis);  //veritcal line = 675
+    ImVec2 bottomRightCorner(xPosOfXaxisEnd, yPosOfXaxis); //horizontal line = 1025 long
+    ImVec2 topLeftCorner(xPosOfYaxis,yPosOfYaxisEnd);
     ImDrawList *draw_list = ImGui::GetWindowDrawList();
     
-    int xPosOfLeft = 125;
-    int yPosOfBottom = 725;
-    int xPosOfRight = 1150;
-    int yPosOfTop = 50;
-    int xNumOfIndents = 13;
-    int yNumOfIndents = 5;
-
-    ImVec2 bottomLeftCorner(xPosOfLeft, yPosOfBottom);  //veritcal line = 675
-    ImVec2 bottomRightCorner(xPosOfRight, yPosOfBottom); //horizontal line = 1025 long
-    ImVec2 topLeftCorner(xPosOfLeft,yPosOfTop);
-
     ImVec4 white(1.0f, 1.0f, 1.0f, 1.0f);
+
 
     //for the little indents 
     
-    int widthBetweenIndents = (xPosOfRight-xPosOfLeft)/xNumOfIndents;
-    int xPosOfIndent = xPosOfLeft;
+    int widthBetweenIndents = (xPosOfXaxisEnd-xPosOfYaxis)/xNumOfIndents;
+    int xPosOfIndent = xPosOfYaxis;
 
-    int heightBetweenIndents = (yPosOfBottom-yPosOfTop)/yNumOfIndents;
-    int yPosOfIndent = yPosOfBottom;
+    int heightBetweenIndents = (yPosOfXaxis-yPosOfYaxisEnd)/yNumOfIndents;
+    int yPosOfIndent = yPosOfXaxis;
+
+    numTicker = backtesterInstance.getTotalNumOfMinutes();
+    heightPixelPerDollar = heightOfGraph/(backtesterInstance.getDayMaximum() - backtesterInstance.getDayMinimum());
+
+    yNumOfIndents = int (backtesterInstance.getDayMaximum() - backtesterInstance.getDayMinimum());
 
     // ImVec2 topOfIndent()
 
@@ -155,24 +172,50 @@ void UseImGui::makeGraph(){
 
     for(int indentNum = 1; indentNum <= xNumOfIndents; indentNum++){
 
-        ImVec2 topIndent(xPosOfIndent + widthBetweenIndents*(indentNum), (yPosOfBottom + 10));
-        ImVec2 bottomIndent(xPosOfIndent + widthBetweenIndents*(indentNum), (yPosOfBottom - 10));
+        ImVec2 topIndent(xPosOfIndent + widthBetweenIndents*(indentNum), (yPosOfXaxis + 10));
+        ImVec2 bottomIndent(xPosOfIndent + widthBetweenIndents*(indentNum), (yPosOfXaxis - 10));
 
         draw_list->AddLine(topIndent, bottomIndent, ImColor(white), 3.0f);
     }
 
     for(int indentNum = 1; indentNum <= yNumOfIndents; indentNum++){
 
-        ImVec2 leftIndent((xPosOfLeft - 10), yPosOfBottom - heightBetweenIndents*(indentNum));
-        ImVec2 rightIndent((xPosOfLeft + 10), yPosOfBottom - heightBetweenIndents*(indentNum));
+        ImVec2 leftIndent((xPosOfYaxis - 10), yPosOfXaxis - heightBetweenIndents*(indentNum));
+        ImVec2 rightIndent((xPosOfYaxis + 10), yPosOfXaxis - heightBetweenIndents*(indentNum));
 
         draw_list->AddLine(leftIndent, rightIndent, ImColor(white), 3.0f);
     }
+
+    // cout << heightPixelPerDollar << "\n";
+    // cout << heightOfGraph << "\n";
+    // cout << (backtesterInstance.getDayMaximum() - backtesterInstance.getDayMinimum()) << "\n";
+    // cout << (backtesterInstance.getDayMinimum()) << "\n";
+    
+    for(int minuteInfoIndex = 0; minuteInfoIndex < numTicker; minuteInfoIndex++){
+
+
+        vector<minuteTickerInfo> tempInfo = backtesterInstance.getDayInfo();
+
+        double minuteHigh = (tempInfo[minuteInfoIndex]).high;
+        double minuteLow = (tempInfo[minuteInfoIndex]).low;
+        plotPoint(minuteHigh, minuteLow, minuteInfoIndex, backtesterInstance.getDayMaximum(), backtesterInstance.getDayMinimum(), draw_list);
+    }
+
 }
 
-void UseImGui::plotPoint(int xPosOfLeft, int yPosOfBottom, int xPosOfRight, int yPosOfTop){
-    int widthOfGraph = xPosOfRight - xPosOfLeft;
-    int heightOfGraph = yPosOfBottom - yPosOfTop;
-    int pixelsPerMinute = widthOfGraph / (int (6.5 * 60));
+void UseImGui::plotPoint(double high, double low, int minuteInfoIndex, int dayMax, int dayMin, ImDrawList *draw_list){
+    ImVec4 white(1.0f, 1.0f, 1.0f, 1.0f);
+    int xPositionOfCandle = xPosOfYaxis + (widthPixelsPerMinute * minuteInfoIndex);
+    int yCandleTop = yPosOfXaxis - (heightPixelPerDollar * (high - dayMin));
+    int yCandleBottom = yPosOfXaxis - (heightPixelPerDollar * (low - dayMin));
 
+    ImVec2 topCandle(xPositionOfCandle, (yCandleTop));
+    ImVec2 bottomCandle(xPositionOfCandle, (yCandleBottom));
+   
+
+    // cout<< "xPositionOfCandle: "<< xPositionOfCandle << "\n";
+    // cout<< "yCandleTop: "<< yCandleTop << "\n";
+    // cout<< "yCandleBottom: "<< yCandleBottom << "\n";
+
+    draw_list->AddLine(topCandle, bottomCandle, ImColor(white), 2.0f);
 }

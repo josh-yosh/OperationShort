@@ -66,7 +66,7 @@ int main() {
     io.Fonts->Build();
 
     //ms ratio, symbol, year, month, day
-    Backtester backtesterInstance(100, "APPL", 2025, 7, 11);
+    Backtester backtesterInstance(10, "APPL", 2025, 7, 11);
 
     while (!glfwWindowShouldClose(window)) {
         glfwPollEvents();
@@ -90,14 +90,14 @@ int main() {
 
         //----------------------------------------------------------------------------
         // myimgui.graphWindow();
-        ImGui::SetNextWindowSizeConstraints(ImVec2(1100,800), ImVec2(1100,800));
-        ImGui::SetNextWindowPos(ImVec2(75, 0), ImGuiCond_Once);
+        ImGui::SetNextWindowSizeConstraints(ImVec2(1225,800), ImVec2(1225,800));
+        ImGui::SetNextWindowPos(ImVec2(0, 0), ImGuiCond_Once);
 
         ImGui::Begin("Graph");
 
         ImGui::PushStyleColor(ImGuiCol_Border, ImVec4(1.0f, 1.0f, 1.0f, 1.0f));
-        ImGui::BeginChild("Graph of Price", ImVec2(1085, 760), ImGuiChildFlags_Borders);
-        myimgui.makeGraph();
+        ImGui::BeginChild("Graph of Price", ImVec2(1200, 760), ImGuiChildFlags_Borders);
+        myimgui.makeGraph(backtesterInstance);
 
 
         ImGui::PopStyleColor();
@@ -107,8 +107,8 @@ int main() {
 
         //----------------------------------------------------------------------------
         // myimgui.logWindow(defaultFont, headerFont, logText);
-        ImGui::SetNextWindowSizeConstraints(ImVec2(325,800), ImVec2(325,800));   //changes window size constraing
-        ImGui::SetNextWindowPos(ImVec2(1200, 0), ImGuiCond_Once);
+        ImGui::SetNextWindowSizeConstraints(ImVec2(315,800), ImVec2(315,800));   //changes window size constraing
+        ImGui::SetNextWindowPos(ImVec2(1225, 0), ImGuiCond_Once);
         ImGui::Begin("Log");                          // Create a window called "Conan Logo" and append into it.
 
         ImGui::PushFont(defaultFont);

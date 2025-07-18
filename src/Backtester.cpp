@@ -12,7 +12,9 @@ using namespace std;
 
 
 Backtester::Backtester(int timeRatioMsToSec, string tickerSymbol, int simulatedYear, int simulatedMonth, int simulatedDay)
-    : timeRatioMsToSec(timeRatioMsToSec), tickerSymbol(tickerSymbol), simulatedYear(simulatedYear), simulatedMonth(simulatedMonth), simulatedDay(simulatedDay), simulatedHour(13), simulatedMin(30), timeEnd(false)
+    : timeRatioMsToSec(timeRatioMsToSec), tickerSymbol(tickerSymbol), 
+    simulatedYear(simulatedYear), simulatedMonth(simulatedMonth), simulatedDay(simulatedDay), simulatedHour(13), simulatedMin(30), 
+    timeEnd(false), totalNumOfMinutes(0), dayMinimum(0.0), dayMaximum(0.0)
 { //need to add algorithm in later as parameter
     startTime = steady_clock::now();
 }
@@ -20,9 +22,8 @@ Backtester::Backtester(int timeRatioMsToSec, string tickerSymbol, int simulatedY
 void Backtester::simulateMinute(string csvName){
     //msToVirtualSecond == value of variable is #ms per virtual simulated second.
 
-    cout<< (timeRatioSatifisfied() && !timeEnd) << "\n";
+    
     if(timeRatioSatifisfied() && !timeEnd){
-        cout << "here 3\n";
         pushToDayInfo(pullMinuteTickerInfo(csvName));
         this->incrementSimulatedMinute();
     }
@@ -35,6 +36,23 @@ auto Backtester::getElapsedTime(){ //works
     auto end = steady_clock::now();
     auto start = this->startTime;
     return std::chrono::duration_cast<std::chrono::milliseconds>(end - start);
+}
+
+double Backtester::getDayMaximum(){
+    return dayMaximum;
+}
+
+double Backtester::getDayMinimum(){
+    return dayMinimum;
+}
+
+int Backtester::getTotalNumOfMinutes(){
+    return totalNumOfMinutes;
+}
+
+void Backtester::setInitialMinAndMax(minuteTickerInfo tempTickerInfo){
+    dayMinimum = tempTickerInfo.close - 5;
+    dayMaximum = tempTickerInfo.close + 5;
 }
 
 bool Backtester::timeRatioSatifisfied(){ //works
@@ -54,11 +72,19 @@ char* Backtester::getFullDate(){
 //pulling market info functions
 
 void Backtester::pushToDayInfo(minuteTickerInfo minuteInfo){
-    this->dayInfo.push_back(minuteInfo); 
+    dayInfo.push_back(minuteInfo);
+    if(minuteInfo.close > dayMaximum){
+        dayMaximum = minuteInfo.close;
+    }
+    if(minuteInfo.close < dayMinimum){
+        dayMinimum = minuteInfo.close;
+    }  
 }
 
 void Backtester::incrementSimulatedMinute(){
-    if(simulatedHour == 20){
+    if(totalNumOfMinutes < int (6.5 * 60))
+        totalNumOfMinutes++;
+    if(simulatedHour == 19 && simulatedMin == 59){
         timeEnd = true;
     }else if(simulatedMin == 59){
         simulatedHour++;
@@ -102,6 +128,7 @@ minuteTickerInfo Backtester::pullMinuteTickerInfo(string csvName){
     while (getline(fin, line))
     {
         
+        
         row.clear();
 
         // used for breaking words
@@ -113,13 +140,11 @@ minuteTickerInfo Backtester::pullMinuteTickerInfo(string csvName){
 
         while (getline(ss, substr, ',')){
             
-            cout << substr << "\n";
             // add all the column data
             // of a row to a vector
             row.push_back(substr);
         }
 
-        cout << "hell0 \n";
         
         // Compare the roll number
         if (row[0] == fullDate)
@@ -133,14 +158,21 @@ minuteTickerInfo Backtester::pullMinuteTickerInfo(string csvName){
             minuteInfo.low = stod(row[3]);
             minuteInfo.open = stod(row[4]);
 
-            cout << "time: " <<  minuteInfo.time << " : \n";
-            cout << "Close: " << minuteInfo.close << "\n";
-            cout << "High: " << minuteInfo.high << "\n";
-            cout << "Low: " << minuteInfo.low << "\n";
-            cout << "Open: " << minuteInfo.open << "\n";
+            // cout << "time: " <<  minuteInfo.time << " : \n";
+            // cout << "Close: " << minuteInfo.close << "\n";
+            // cout << "High: " << minuteInfo.high << "\n";
+            // cout << "Low: " << minuteInfo.low << "\n";
+            // cout << "Open: " << minuteInfo.open << "\n";
+
+            if(dayMinimum == 0.0 || dayMaximum == 0.0){
+                cout << "seting day min";
+                setInitialMinAndMax(minuteInfo);
+            }
 
             break;
         }
+
+
     }
     if (count == 0)
         cout << "Record not found\n";
