@@ -56,12 +56,13 @@ int main() {
 
     //setting up context, io, and  myimgui object -------------------------------
 
-    UseImGui myimgui;
+    
 
     IMGUI_CHECKVERSION();
     ImGui::CreateContext();
     ImGuiIO &io = ImGui::GetIO();
     
+    UseImGui myimgui(io);
 
     // Setup Platform/RendererBindings
     ImGui_ImplGlfw_InitForOpenGL(window, true);
@@ -105,81 +106,15 @@ int main() {
         
 
         //----------------------------------------------------------------------------
-        // myimgui.graphWindow();
-        ImGui::SetNextWindowSizeConstraints(ImVec2(1225,800), ImVec2(1225,800));
-        ImGui::SetNextWindowPos(ImVec2(0, 0), ImGuiCond_Once);
-
-        ImGui::Begin("Graph");
-
-        ImGui::PushStyleColor(ImGuiCol_Border, ImVec4(1.0f, 1.0f, 1.0f, 1.0f));
-        ImGui::BeginChild("Graph of Price", ImVec2(1200, 760), ImGuiChildFlags_Borders);
-        myimgui.makeGraph(backtesterInstance);
-
-
-        ImGui::PopStyleColor();
-        ImGui::EndChild();
-
-        ImGui::End();
+        myimgui.graphWindow(backtesterInstance);
+       
 
         //----------------------------------------------------------------------------
-        // myimgui.logWindow(defaultFont, headerFont, logText);
-        ImGui::SetNextWindowSizeConstraints(ImVec2(315,800), ImVec2(315,800));   //changes window size constraing
-        ImGui::SetNextWindowPos(ImVec2(1225, 0), ImGuiCond_Once);
-        ImGui::Begin("Log");                          // Create a window called "Conan Logo" and append into it.
 
-        ImGui::PushFont(defaultFont);
-        // bool show_demo_window = false;
-        // ImGui::ShowDemoWindow(&show_demo_window);
-
-        // ImGui::ShowStyleEditor(&(ImGui::GetStyle()));
-        ImGui::PushFont(headerFont);
-        ImGui::Text("SYMBOL: APPL");
-        ImGui::PopFont();
+        myimgui.logWindow(defaultFont, headerFont, logText, tempDayInfo);
         
-
-        ImGui::PushStyleColor(ImGuiCol_ChildBg, ImVec4(0.1f, 0.1f, 0.1f, 1.0f));
-        ImGui::PushStyleColor(ImGuiCol_Border, ImVec4(1.0f, 1.0f, 1.0f, 1.0f));
-        ImGui::BeginChild("Scrolling", ImVec2(300, 725), ImGuiChildFlags_Borders);
-
-        ImGui::PopFont();
-        ImGui::PushFont(logText);
-        ImGui::PushStyleColor(ImGuiCol_Text, ImVec4(0.0f, 1.0f, 0.0f, 1.0f));
-        
-
-        for (int i = 0; i < tempDayInfo.size(); i++){
-            ImGui::Text( "%s - 5 Shares APPLE @ 5.42", tempDayInfo[i].time.substr(11, 8).c_str());
-        }
-
-        ImGui::PopStyleColor();
-        ImGui::PopFont();
-
-        ImGui::PopStyleColor();
-        ImGui::PopStyleColor(); //poping child background
-        ImGui::EndChild();
-
-        ImGui::End();
-
         //----------------------------------------------------------------------------
-        // myimgui.plWindow(headerFont);
-        ImGui::SetNextWindowSizeConstraints(ImVec2(240,50), ImVec2(240,50));
-        ImGui::SetNextWindowPos(ImVec2(920, 35), ImGuiCond_Once);
-        bool p_open_false = false;
-        ImGui::PushStyleColor(ImGuiCol_Border, ImVec4(1.0f, 1.0f, 1.0f, 1.0f));
-
-        ImGui::Begin("Profit and Loss", &p_open_false, ImGuiWindowFlags_NoTitleBar | ImGuiWindowFlags_NoScrollbar);
-        ImGui::PopStyleColor();
-
-        ImGui::PushFont(headerFont);
-        ImGui::Text("P/L:");
-        ImGui::SameLine();
-
-        ImGui::PushStyleColor(ImGuiCol_Text, ImVec4(0.0f, 1.0f, 0.0f, 1.0f));
-        ImGui::Text("$200.43");
-        ImGui::PopStyleColor();
-
-        ImGui::PopFont();
-
-        ImGui::End();
+        myimgui.plWindow(headerFont);
         
         //----------------------------------------------------------------------------
         myimgui.Render();

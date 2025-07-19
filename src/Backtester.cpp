@@ -50,13 +50,21 @@ int Backtester::getTotalNumOfMinutes(){
     return totalNumOfMinutes;
 }
 
+double Backtester::getCurrentPrice(){
+    cout << dayInfo.size() << "\n";
+    return dayInfo.back().close;
+}
+
 void Backtester::setInitialMinAndMax(minuteTickerInfo tempTickerInfo){
-    dayMinimum = tempTickerInfo.close - 5;
-    dayMaximum = tempTickerInfo.close + 5;
+    dayMinimum = tempTickerInfo.close - 2;
+    dayMaximum = tempTickerInfo.close + 2;
 }
 
 bool Backtester::timeRatioSatifisfied(){ //works
-    bool ratioSatisfied = ((this->getElapsedTime().count()%this->timeRatioMsToSec) == 0);
+    bool ratioSatisfied = ((getElapsedTime().count() > timeRatioMsToSec));
+    if(ratioSatisfied){
+        startTime = steady_clock::now();
+    }
     return ratioSatisfied;
 }
 
@@ -73,11 +81,14 @@ char* Backtester::getFullDate(){
 
 void Backtester::pushToDayInfo(minuteTickerInfo minuteInfo){
     dayInfo.push_back(minuteInfo);
+    // cout << "lol\n";
     if(minuteInfo.close > dayMaximum){
         dayMaximum = minuteInfo.close;
+        // cout << "hit\n";
     }
     if(minuteInfo.close < dayMinimum){
         dayMinimum = minuteInfo.close;
+        // cout << "double hit\n";
     }  
 }
 
@@ -123,7 +134,8 @@ minuteTickerInfo Backtester::pullMinuteTickerInfo(string csvName){
     vector<string> row;
     string line, word, temp;
     minuteTickerInfo minuteInfo;
-    getline(fin, line);
+    getline(fin, line); //get first line: Price,Close,High,Low,Open,Volume
+    getline(fin, line); // getting passed second line: Ticker,AAPL,AAPL,AAPL,AAPL,AAPL;
 
     while (getline(fin, line))
     {
@@ -180,5 +192,6 @@ minuteTickerInfo Backtester::pullMinuteTickerInfo(string csvName){
 
     return minuteInfo;
 }
+
 
 

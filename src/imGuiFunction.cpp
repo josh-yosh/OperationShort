@@ -9,7 +9,7 @@ void UseImGui::Init(GLFWwindow* window, const char* glsl_version){
     ImGuiIO &io = ImGui::GetIO();
 };
 
-UseImGui::UseImGui(){
+UseImGui::UseImGui(ImGuiIO &io): io(io) {
     xPosOfYaxis = 5;
     yPosOfXaxis = 725;
     xPosOfXaxisEnd = 1175;
@@ -19,6 +19,10 @@ UseImGui::UseImGui(){
     heightOfGraph = yPosOfXaxis - yPosOfYaxisEnd;
     widthPixelsPerMinute = widthOfGraph / (int (6.5 * 60));
     
+    static ImFont* defaultFont = io.Fonts->AddFontDefault();
+    static ImFont* headerFont = io.Fonts->AddFontFromFileTTF("./fonts/ProggyClean.ttf", 36.0f);
+    static ImFont* logText = io.Fonts->AddFontFromFileTTF("./fonts/ProggyClean.ttf", 16.0f);
+
     cout << widthOfGraph << "\n";
     cout << int (6.5 * 60) << "\n";
     cout <<widthPixelsPerMinute << "\n";
@@ -32,57 +36,57 @@ void UseImGui::NewFrame(){
     ImGui::NewFrame();
 }
 
-void UseImGui::graphWindow(){
-    ImGui::SetNextWindowSizeConstraints(ImVec2(1100,800), ImVec2(1175,800));
+void UseImGui::graphWindow(Backtester backtesterInstance){
+    ImGui::SetNextWindowSizeConstraints(ImVec2(1225,850), ImVec2(1225,850));
     ImGui::SetNextWindowPos(ImVec2(0, 0), ImGuiCond_Once);
 
     ImGui::Begin("Graph");
 
     ImGui::PushStyleColor(ImGuiCol_Border, ImVec4(1.0f, 1.0f, 1.0f, 1.0f));
-    ImGui::BeginChild("Graph of Price", ImVec2(1085, 760), ImGuiChildFlags_Borders);
-    
+    ImGui::BeginChild("Graph of Price", ImVec2(1200, 800), ImGuiChildFlags_Borders);
+    makeGraph(backtesterInstance);
+
+
     ImGui::PopStyleColor();
     ImGui::EndChild();
 
     ImGui::End();
 }
 
-void UseImGui::logWindow(ImFont* defaultFont, ImFont* headerFont, ImFont* logText){
+void UseImGui::logWindow(ImFont* defaultFont, ImFont* headerFont, ImFont* logText, vector<minuteTickerInfo> tempDayInfo){
 
-    // io.Fonts->Build(); //need to do this,
+   ImGui::SetNextWindowSizeConstraints(ImVec2(315,800), ImVec2(315,800));   //changes window size constraing
+        ImGui::SetNextWindowPos(ImVec2(1225, 0), ImGuiCond_Once);
+        ImGui::Begin("Log");                          // Create a window called "Conan Logo" and append into it.
 
-    ImGui::SetNextWindowSizeConstraints(ImVec2(300,800), ImVec2(300,800));   //changes window size constraing
-    ImGui::SetNextWindowPos(ImVec2(1250, 0), ImGuiCond_Once);
-    ImGui::Begin("Log");                          // Create a window called "Conan Logo" and append into it.
+        ImGui::PushFont(defaultFont);
 
-    ImGui::PushFont(defaultFont);
-    // bool show_demo_window = false;
-    // ImGui::ShowDemoWindow(&show_demo_window);
+        ImGui::PushFont(headerFont);
+        ImGui::Text("SYMBOL: APPL");
+        ImGui::PopFont();
+        
 
-    // ImGui::ShowStyleEditor(&(ImGui::GetStyle()));
-    ImGui::PushFont(headerFont);
-    ImGui::Text("SYMBOL: APPL");
-    ImGui::PopFont();
-    
+        ImGui::PushStyleColor(ImGuiCol_ChildBg, ImVec4(0.1f, 0.1f, 0.1f, 1.0f));
+        ImGui::PushStyleColor(ImGuiCol_Border, ImVec4(1.0f, 1.0f, 1.0f, 1.0f));
+        ImGui::BeginChild("Scrolling", ImVec2(300, 725), ImGuiChildFlags_Borders);
 
-    ImGui::PushStyleColor(ImGuiCol_ChildBg, ImVec4(0.1f, 0.1f, 0.1f, 1.0f));
-    ImGui::PushStyleColor(ImGuiCol_Border, ImVec4(1.0f, 1.0f, 1.0f, 1.0f));
-    ImGui::BeginChild("Scrolling", ImVec2(300, 725), ImGuiChildFlags_Borders);
+        ImGui::PopFont();
+        ImGui::PushFont(logText);
+        ImGui::PushStyleColor(ImGuiCol_Text, ImVec4(0.0f, 1.0f, 0.0f, 1.0f));
+        
 
-    ImGui::PopFont();
-    ImGui::PushFont(logText);
-    ImGui::PushStyleColor(ImGuiCol_Text, ImVec4(0.0f, 1.0f, 0.0f, 1.0f));
-    for (int n = 0; n < 50; n++)
-        ImGui::Text("%02d:%02d:%02d - 5 Shares APPLE @ 5.42", n, n, n);
+        for (int i = 0; i < tempDayInfo.size(); i++){
+            ImGui::Text( "%s - 5 Shares APPLE @ 5.42", tempDayInfo[i].time.substr(11, 8).c_str());
+        }
 
-    ImGui::PopStyleColor();
-    ImGui::PopFont();
+        ImGui::PopStyleColor();
+        ImGui::PopFont();
 
-    ImGui::PopStyleColor();
-    ImGui::PopStyleColor(); //poping child background
-    ImGui::EndChild();
+        ImGui::PopStyleColor();
+        ImGui::PopStyleColor(); //poping child background
+        ImGui::EndChild();
 
-    ImGui::End();
+        ImGui::End();
 }
 
 void UseImGui::plWindow(ImFont* headerFont){
@@ -107,22 +111,6 @@ void UseImGui::plWindow(ImFont* headerFont){
     ImGui::End();
 }
 
-void UseImGui::Update(){
-    ImGui::Begin("Graph");                          // Create a window called "Conan Logo" and append into it.
-
-    bool show_demo_window = true;
-
-    ImGui::ShowDemoWindow(&show_demo_window);
-    ImGui::ShowStyleEditor(&(ImGui::GetStyle()));
-    ImGui::Text("STOCK: ");
-    ImGui::BeginChild("Scrolling");
-    for (int n = 0; n < 50; n++)
-        ImGui::Text("%04d: Some text", n);
-    ImGui::EndChild();
-
-	ImGui::End();
-};
-
 void UseImGui::Render(){
     // Render dear imgui into screen
 	ImGui::Render();
@@ -141,6 +129,9 @@ void UseImGui::makeGraph(Backtester backtesterInstance){
     yPosOfXaxis = 725 + centerScreen.y;
     xPosOfXaxisEnd = 1175 + centerScreen.x;
     yPosOfYaxisEnd = 50 + centerScreen.y;
+
+    int hour = 13;
+    int minute = 30;
 
     ImVec2 bottomLeftCorner(xPosOfYaxis, yPosOfXaxis);  //veritcal line = 675
     ImVec2 bottomRightCorner(xPosOfXaxisEnd, yPosOfXaxis); //horizontal line = 1025 long
@@ -175,6 +166,17 @@ void UseImGui::makeGraph(Backtester backtesterInstance){
         ImVec2 topIndent(xPosOfIndent + widthBetweenIndents*(indentNum), (yPosOfXaxis + 10));
         ImVec2 bottomIndent(xPosOfIndent + widthBetweenIndents*(indentNum), (yPosOfXaxis - 10));
 
+        hour = (13 + int((minute +(indentNum * 30))/60));
+        minute = ((30 + (indentNum * 30))%60);
+
+        ImVec2 bottomThinLine(xPosOfIndent + widthBetweenIndents*(indentNum), (yPosOfXaxis));
+        ImVec2 topThinLine(xPosOfIndent + widthBetweenIndents*(indentNum), (yPosOfYaxisEnd));
+
+        draw_list->AddLine(bottomThinLine, topThinLine, ImColor(white), 0.1f);
+
+        ImGui::SetCursorPos(ImVec2((xPosOfIndent + widthBetweenIndents*(indentNum)) - 25, (yPosOfXaxis - 10)));
+        ImGui::Text("%d:%02d", hour, minute);
+
         draw_list->AddLine(topIndent, bottomIndent, ImColor(white), 3.0f);
     }
 
@@ -198,24 +200,34 @@ void UseImGui::makeGraph(Backtester backtesterInstance){
 
         double minuteHigh = (tempInfo[minuteInfoIndex]).high;
         double minuteLow = (tempInfo[minuteInfoIndex]).low;
-        plotPoint(minuteHigh, minuteLow, minuteInfoIndex, backtesterInstance.getDayMaximum(), backtesterInstance.getDayMinimum(), draw_list);
+        plotPoint(minuteHigh, minuteLow, minuteInfoIndex, backtesterInstance.getDayMaximum(), backtesterInstance.getDayMinimum(), draw_list, backtesterInstance);
+        
     }
 
+    drawCurrentPrice(xPositionOfCurrentPrice, yPositionOfCurrentPrice, backtesterInstance);
 }
 
-void UseImGui::plotPoint(double high, double low, int minuteInfoIndex, int dayMax, int dayMin, ImDrawList *draw_list){
+void UseImGui::plotPoint(double high, double low, int minuteInfoIndex, int dayMax, int dayMin, ImDrawList *draw_list, Backtester backtesterInstance){
     ImVec4 white(1.0f, 1.0f, 1.0f, 1.0f);
     int xPositionOfCandle = xPosOfYaxis + (widthPixelsPerMinute * minuteInfoIndex);
     int yCandleTop = yPosOfXaxis - (heightPixelPerDollar * (high - dayMin));
     int yCandleBottom = yPosOfXaxis - (heightPixelPerDollar * (low - dayMin));
 
+    xPositionOfCurrentPrice = xPositionOfCandle;
+    yPositionOfCurrentPrice = yCandleTop;
+
     ImVec2 topCandle(xPositionOfCandle, (yCandleTop));
     ImVec2 bottomCandle(xPositionOfCandle, (yCandleBottom));
    
-
     // cout<< "xPositionOfCandle: "<< xPositionOfCandle << "\n";
     // cout<< "yCandleTop: "<< yCandleTop << "\n";
     // cout<< "yCandleBottom: "<< yCandleBottom << "\n";
 
     draw_list->AddLine(topCandle, bottomCandle, ImColor(white), 2.0f);
+}
+
+void UseImGui::drawCurrentPrice(int xPositionOfCandle, int yCandleTop, Backtester backtesterInstance){
+
+    ImGui::SetCursorPos(ImVec2((xPositionOfCandle + 25), (yCandleTop - 20)));
+    ImGui::Text("$%f", backtesterInstance.getCurrentPrice());
 }

@@ -44,6 +44,7 @@ class Backtester //keep in mind market opens 9:30am EST and closes 4pm EST
         int getTotalNumOfMinutes();
         char* getFullDate();
         auto getElapsedTime();
+        double getCurrentPrice();
 
         void setInitialMinAndMax(minuteTickerInfo tempTickerInfo);
 
