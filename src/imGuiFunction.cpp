@@ -19,13 +19,14 @@ UseImGui::UseImGui(ImGuiIO &io): io(io) {
     heightOfGraph = yPosOfXaxis - yPosOfYaxisEnd;
     widthPixelsPerMinute = widthOfGraph / (int (6.5 * 60));
     
+    
     static ImFont* defaultFont = io.Fonts->AddFontDefault();
     static ImFont* headerFont = io.Fonts->AddFontFromFileTTF("./fonts/ProggyClean.ttf", 36.0f);
     static ImFont* logText = io.Fonts->AddFontFromFileTTF("./fonts/ProggyClean.ttf", 16.0f);
 
-    cout << widthOfGraph << "\n";
-    cout << int (6.5 * 60) << "\n";
-    cout <<widthPixelsPerMinute << "\n";
+    // cout << widthOfGraph << "\n";
+    // cout << int (6.5 * 60) << "\n";
+    // cout <<widthPixelsPerMinute << "\n";
     
 }
 
@@ -36,7 +37,7 @@ void UseImGui::NewFrame(){
     ImGui::NewFrame();
 }
 
-void UseImGui::graphWindow(Backtester backtesterInstance){
+void UseImGui::graphWindow(Backtester backtesterInstance, ImFont* timeText){
     ImGui::SetNextWindowSizeConstraints(ImVec2(1225,850), ImVec2(1225,850));
     ImGui::SetNextWindowPos(ImVec2(0, 0), ImGuiCond_Once);
 
@@ -44,7 +45,21 @@ void UseImGui::graphWindow(Backtester backtesterInstance){
 
     ImGui::PushStyleColor(ImGuiCol_Border, ImVec4(1.0f, 1.0f, 1.0f, 1.0f));
     ImGui::BeginChild("Graph of Price", ImVec2(1200, 800), ImGuiChildFlags_Borders);
-    makeGraph(backtesterInstance);
+    makeGraph(backtesterInstance, timeText);
+
+    //making top legend thing
+    ImGui::SetCursorPos(ImVec2(30, 20));
+    ImGui::PushFont(timeText);
+    ImGui::Text("Time: %s", backtesterInstance.getCurrentTime());
+    ImGui::PopFont();
+
+    ImGui::SetCursorPos(ImVec2(200, 20));
+    ImGui::PushFont(timeText);
+    ImGui::Text("Current Price $%f", backtesterInstance.getCurrentPrice());
+    ImGui::PopFont();
+
+
+    //add high and low later
 
 
     ImGui::PopStyleColor();
@@ -123,8 +138,8 @@ void UseImGui::Shutdown(){
 	ImGui::DestroyContext();
 };
 
-void UseImGui::makeGraph(Backtester backtesterInstance){
-    const ImVec2 centerScreen = ImGui::GetCursorScreenPos();
+void UseImGui::makeGraph(Backtester backtesterInstance, ImFont* timeText){
+    centerScreen = ImGui::GetCursorScreenPos();
     xPosOfYaxis = 5 + centerScreen.x;
     yPosOfXaxis = 725 + centerScreen.y;
     xPosOfXaxisEnd = 1175 + centerScreen.x;
@@ -174,8 +189,14 @@ void UseImGui::makeGraph(Backtester backtesterInstance){
 
         draw_list->AddLine(bottomThinLine, topThinLine, ImColor(white), 0.1f);
 
-        ImGui::SetCursorPos(ImVec2((xPosOfIndent + widthBetweenIndents*(indentNum)) - 25, (yPosOfXaxis - 10)));
+        const ImVec2 textOffset(-20, 25);
+
+        //setCursoPos already takes into account of the window moving, we have to remove the added amount that is incorporated into
+        //xPosOfIndent and yPosOfXaxis
+        ImGui::SetCursorPos(ImVec2(((xPosOfIndent - centerScreen.x) + widthBetweenIndents*(indentNum)) + textOffset.x, ((yPosOfXaxis - centerScreen.y) + textOffset.y)));
+        ImGui::PushFont(timeText);
         ImGui::Text("%d:%02d", hour, minute);
+        ImGui::PopFont();
 
         draw_list->AddLine(topIndent, bottomIndent, ImColor(white), 3.0f);
     }
@@ -204,7 +225,7 @@ void UseImGui::makeGraph(Backtester backtesterInstance){
         
     }
 
-    drawCurrentPrice(xPositionOfCurrentPrice, yPositionOfCurrentPrice, backtesterInstance);
+    drawCurrentPrice(xPositionOfCurrentPrice, yPositionOfCurrentPrice, backtesterInstance, timeText);
 }
 
 void UseImGui::plotPoint(double high, double low, int minuteInfoIndex, int dayMax, int dayMin, ImDrawList *draw_list, Backtester backtesterInstance){
@@ -226,8 +247,14 @@ void UseImGui::plotPoint(double high, double low, int minuteInfoIndex, int dayMa
     draw_list->AddLine(topCandle, bottomCandle, ImColor(white), 2.0f);
 }
 
-void UseImGui::drawCurrentPrice(int xPositionOfCandle, int yCandleTop, Backtester backtesterInstance){
+void UseImGui::drawCurrentPrice(int xPositionOfCandle, int yCandleTop, Backtester backtesterInstance, ImFont* timeText ){
+    ImVec2 priceOffset(25, 20);
 
-    ImGui::SetCursorPos(ImVec2((xPositionOfCandle + 25), (yCandleTop - 20)));
+
+    ImGui::SetCursorPos(ImVec2(((xPositionOfCandle - centerScreen.x) + priceOffset.x), ((yCandleTop - centerScreen.y) + priceOffset.y)));
+    
+    
+    ImGui::PushFont(timeText);
     ImGui::Text("$%f", backtesterInstance.getCurrentPrice());
+    ImGui::PopFont();
 }

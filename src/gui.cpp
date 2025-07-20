@@ -75,6 +75,7 @@ int main() {
     static ImFont* defaultFont = io.Fonts->AddFontDefault();
     static ImFont* headerFont = io.Fonts->AddFontFromFileTTF("./fonts/ProggyClean.ttf", 36.0f);
     static ImFont* logText = io.Fonts->AddFontFromFileTTF("./fonts/ProggyClean.ttf", 16.0f);
+    static ImFont* timeText = io.Fonts->AddFontFromFileTTF("./fonts/ProggyClean.ttf", 24.0f);
     
     io.Fonts->Build();
 
@@ -106,7 +107,7 @@ int main() {
         
 
         //----------------------------------------------------------------------------
-        myimgui.graphWindow(backtesterInstance);
+        myimgui.graphWindow(backtesterInstance, timeText);
        
 
         //----------------------------------------------------------------------------

@@ -51,7 +51,6 @@ int Backtester::getTotalNumOfMinutes(){
 }
 
 double Backtester::getCurrentPrice(){
-    cout << dayInfo.size() << "\n";
     return dayInfo.back().close;
 }
 
@@ -75,6 +74,13 @@ char* Backtester::getFullDate(){
     int sizeOfFullDate = 26; //25 + null terminator
     snprintf(fullDate, 26, "%04d-%02d-%02d %02d:%02d:00+00:00", this->simulatedYear, this->simulatedMonth, this->simulatedDay, this->simulatedHour, this->simulatedMin);
     return fullDate;
+}
+
+char* Backtester::getCurrentTime(){
+    char* currentTime = (char*)malloc(sizeof(char) * 6);
+
+    snprintf(currentTime, 6, "%02d:%02d", simulatedHour, simulatedMin);
+    return currentTime;
 }
 
 //pulling market info functions

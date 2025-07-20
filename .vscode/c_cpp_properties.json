@@ -4,10 +4,9 @@
             "name": "macos-clang-arm64",
             "includePath": [
                 "${workspaceFolder}/**",
-                "${workspaceFolder}/src/imgui",
                 "${workspaceFolder}/vcpkg_installed/arm64-osx/**",
                 "${workspaceFolder}/vcpkg_installed/arm64-osx/include",
-                "${workspaceFolder}/src"
+                "${workspaceFolder}/src/**"
             ],
             "compilerPath": "/usr/bin/clang",
             "cStandard": "${default}",

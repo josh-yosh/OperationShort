@@ -22,13 +22,13 @@ find_package(imgui CONFIG REQUIRED)
 
 add_executable(${PROJECT_NAME}  
     "src/backtester.cpp"
-    "src/backtester.hpp"
     "src/gui.cpp"
     "src/imGuiFunction.cpp"
     "src/OperationShortApplication.cpp"
     "src/Portfolio.cpp"
+    "src/Stock.cpp"
     "src/Strategy.cpp"
-    "src/UsingImGui.h"
+
 )
 
 target_link_libraries(${PROJECT_NAME}

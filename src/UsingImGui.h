@@ -18,12 +18,12 @@ public:
     void NewFrame();
     void Render();
     void Shutdown();
-    void graphWindow(Backtester backtesterInstance);
+    void graphWindow(Backtester backtesterInstance, ImFont* timeText);
     void logWindow(ImFont* defaultFont, ImFont* headerFont, ImFont* logText, vector<minuteTickerInfo> tempDayInfo);
     void plWindow(ImFont* headerFont);
-    void makeGraph(Backtester backtesterInstance);
+    void makeGraph(Backtester backtesterInstance, ImFont* timeText);
     void plotPoint(double high, double low, int numTicker, int dayMax, int dayMin, ImDrawList *draw_list, Backtester backtesterInstance);
-    void drawCurrentPrice(int xPositionOfCandle ,int yCandleTop, Backtester backtesterInstance);
+    void drawCurrentPrice(int xPositionOfCandle ,int yCandleTop, Backtester backtesterInstance, ImFont* timeText);
 
 
 private:
@@ -40,6 +40,7 @@ private:
     int numTicker;
     int xPositionOfCurrentPrice;
     int yPositionOfCurrentPrice;
+    ImVec2 centerScreen;
     ImVec4 white;
     
 
