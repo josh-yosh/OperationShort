@@ -3,6 +3,7 @@
 #include <string>
 #include <stdio.h>
 #include <stdbool.h>
+#include <iostream>
 
 Stock::Stock(string name):
     name(name)
@@ -11,10 +12,12 @@ Stock::Stock(string name):
 }
 
 void Stock::addPosition(int volume, double buyPrice){
+    priceBasis += volume * buyPrice;
+    totalVolume += volume;
     positions.push_back(position(volume, buyPrice));
 }
 
-double Stock::removePosition(int volume, double sellPrice){
+double Stock::sellPosition(int volume, double sellPrice){
     int mostRecentBuyVolume = positions.back().volume;
     bool mostRecentBuyVolumeLessThanSellVolume = mostRecentBuyVolume < volume;
     double profitLoss;
@@ -23,6 +26,7 @@ double Stock::removePosition(int volume, double sellPrice){
         positions.back().volume -= volume;
         profitLoss = (volume * sellPrice) - (volume * positions.back().buyPrice);
 
+        totalProfitLoss = profitLoss;
         return profitLoss;
     }
 
@@ -30,5 +34,34 @@ double Stock::removePosition(int volume, double sellPrice){
     int leftOverSellVolume = volume - positions.back().volume;
     positions.pop_back();
     
-    return profitLoss + removePosition(leftOverSellVolume, sellPrice);
+    return profitLoss + sellPosition(leftOverSellVolume, sellPrice);
+}
+
+double Stock::getTotalStockPrice(double currentPrice){
+    int totalStockPrice = currentPrice * totalVolume;
+    return totalStockPrice;
+}
+
+int Stock::getTotalVolume(){
+    return totalVolume;
+}
+
+string Stock::getName(){
+    return name;
+}
+
+double Stock::sellAll(double currentStockPrice){
+    return sellPosition(getTotalVolume(), currentStockPrice);
+}
+
+void Stock::printPositions(){
+    if(positions.size() == 0){
+        cout << "You have no holdings for " << name << "\n"; 
+    } else {
+        cout << "Symbol: " << name << "\n";
+        for(int i = 0; i < positions.size(); i++){
+            cout << "[Volume: " << positions[i].volume << ", Price: " << positions[i].buyPrice << "\n";
+        }
+        cout << "\n";   
+    }
 }

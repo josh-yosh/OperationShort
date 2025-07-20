@@ -13,7 +13,12 @@ class Stock{
         Stock(string name);
 
         void addPosition(int volume, double buyPrice);
-        double removePosition(int volume, double sellPrice);
+        double sellPosition(int volume, double sellPrice);
+        double getTotalStockPrice(double currentStockPrice);
+        int getTotalVolume();
+        double sellAll(double currentStockPrice);
+        string getName();
+
         void printPositions();
 
         struct position{
@@ -30,7 +35,7 @@ class Stock{
         int totalVolume;
         double totalStockValue;
         double priceBasis;
-        double totalStockGain;
+        double totalProfitLoss;
         string name;
         string tickerSymbol;
 };
