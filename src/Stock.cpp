@@ -17,15 +17,16 @@ void Stock::addPosition(int volume, double buyPrice){
     positions.push_back(position(volume, buyPrice));
 }
 
-double Stock::sellPosition(int volume, double sellPrice){
+double Stock::sellPosition(int volume, double sellPrice){ // FIX THIS RECURSION, SOMETHING IS WRONG HERE 
     int mostRecentBuyVolume = positions.back().volume;
     bool mostRecentBuyVolumeLessThanSellVolume = mostRecentBuyVolume < volume;
     double profitLoss;
+    double cashFromSell;
 
     if(mostRecentBuyVolumeLessThanSellVolume){
         positions.back().volume -= volume;
         profitLoss = (volume * sellPrice) - (volume * positions.back().buyPrice);
-
+        cashFromSell +=
         totalProfitLoss = profitLoss;
         return profitLoss;
     }

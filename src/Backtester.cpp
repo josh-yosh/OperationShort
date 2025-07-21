@@ -30,6 +30,10 @@ void Backtester::simulateMinute(string csvName){
 
 }
 
+string Backtester::getTickerSymbol(){
+    return tickerSymbol;
+}
+
 //time functions
 
 auto Backtester::getElapsedTime(){ //works
@@ -183,7 +187,6 @@ minuteTickerInfo Backtester::pullMinuteTickerInfo(string csvName){
             // cout << "Open: " << minuteInfo.open << "\n";
 
             if(dayMinimum == 0.0 || dayMaximum == 0.0){
-                cout << "seting day min";
                 setInitialMinAndMax(minuteInfo);
             }
 

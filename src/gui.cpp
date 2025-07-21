@@ -3,6 +3,7 @@
 #include "imgui_impl_opengl3.h"
 #include "UsingImGui.h"
 #include "backtester.hpp"
+#include "Strategy.hpp"
 
 #include <GLFW/glfw3.h>
 #include <glad/glad.h>
@@ -29,7 +30,7 @@ int main() {
 
     // creates GLFW WINDOW ------------------------------------------------------
 
-    GLFWwindow* window = glfwCreateWindow(1200, 600, "Backtester", NULL, NULL);
+    GLFWwindow* window = glfwCreateWindow(2400, 1000, "Backtester", NULL, NULL);
     if (!window) {
         std::cerr << "Failed to create GLFW window\n";
         glfwTerminate();
@@ -82,7 +83,8 @@ int main() {
     //backtester instance---------------------------------------------------------
     //ms ratio, symbol, year, month, day
     Backtester backtesterInstance(10, "APPL", 2025, 7, 11);
-
+    Strategy strategyInstance;
+    
 
     //while loop ---------------------------------------------------------
 
@@ -97,6 +99,9 @@ int main() {
 
         backtesterInstance.simulateMinute("APPL");
         vector<minuteTickerInfo> tempDayInfo = backtesterInstance.getDayInfo();
+
+        OrderType order = strategyInstance.waveRiding("APPL", backtesterInstance.getCurrentPrice(), backtesterInstance.getDayInfo());
+        myimgui.handleOrder(order, backtesterInstance.getTotalNumOfMinutes(), backtesterInstance.getCurrentPrice(), backtesterInstance.getTickerSymbol(),  backtesterInstance.getCurrentTime(), strategyInstance.getOrderVolume());
         
 
         //----------------------------------------------------------------------------

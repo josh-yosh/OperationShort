@@ -1,5 +1,6 @@
 #include "UsingImGui.h"
 #include <iostream>
+#include "Strategy.hpp"
 
 
 void UseImGui::Init(GLFWwindow* window, const char* glsl_version){
@@ -87,14 +88,23 @@ void UseImGui::logWindow(ImFont* defaultFont, ImFont* headerFont, ImFont* logTex
 
         ImGui::PopFont();
         ImGui::PushFont(logText);
-        ImGui::PushStyleColor(ImGuiCol_Text, ImVec4(0.0f, 1.0f, 0.0f, 1.0f));
+
         
 
-        for (int i = 0; i < tempDayInfo.size(); i++){
-            ImGui::Text( "%s - 5 Shares APPLE @ 5.42", tempDayInfo[i].time.substr(11, 8).c_str());
+        for (int i = 0; i < allOrderMarks.size(); i++){
+            ImVec4 color;
+            centerScreen = ImGui::GetCursorScreenPos();
+
+            if(allOrderMarks[i].isBuyMark){
+                color = ImVec4(0.0f, 1.0f, 0.0f, 1.0f); // green
+            } else {
+                color = ImVec4(1.0f, 0.0f, 0.0f, 1.0f); //red
+            }
+            ImGui::PushStyleColor(ImGuiCol_Text, color);
+            ImGui::Text( "%s - %d Shares %s @ %05f", allOrderMarks[i].stringTimeOfOrder.c_str(), allOrderMarks[i].volume, allOrderMarks[i].stockSymbol.c_str(), allOrderMarks[i].priceOfOrder);
+            ImGui::PopStyleColor();
         }
 
-        ImGui::PopStyleColor();
         ImGui::PopFont();
 
         ImGui::PopStyleColor();
@@ -148,6 +158,9 @@ void UseImGui::makeGraph(Backtester backtesterInstance, ImFont* timeText){
     int hour = 13;
     int minute = 30;
 
+    double dayMin = backtesterInstance.getDayMinimum();
+    double dayMax = backtesterInstance.getDayMaximum();
+
     ImVec2 bottomLeftCorner(xPosOfYaxis, yPosOfXaxis);  //veritcal line = 675
     ImVec2 bottomRightCorner(xPosOfXaxisEnd, yPosOfXaxis); //horizontal line = 1025 long
     ImVec2 topLeftCorner(xPosOfYaxis,yPosOfYaxisEnd);
@@ -175,7 +188,7 @@ void UseImGui::makeGraph(Backtester backtesterInstance, ImFont* timeText){
     draw_list->AddLine(bottomLeftCorner, topLeftCorner, ImColor(white), 3.0f);
 
     // 13 half hours in a market order
-
+    // x axis marking
     for(int indentNum = 1; indentNum <= xNumOfIndents; indentNum++){
 
         ImVec2 topIndent(xPosOfIndent + widthBetweenIndents*(indentNum), (yPosOfXaxis + 10));
@@ -201,6 +214,8 @@ void UseImGui::makeGraph(Backtester backtesterInstance, ImFont* timeText){
         draw_list->AddLine(topIndent, bottomIndent, ImColor(white), 3.0f);
     }
 
+    // y axis markings
+
     for(int indentNum = 1; indentNum <= yNumOfIndents; indentNum++){
 
         ImVec2 leftIndent((xPosOfYaxis - 10), yPosOfXaxis - heightBetweenIndents*(indentNum));
@@ -214,15 +229,18 @@ void UseImGui::makeGraph(Backtester backtesterInstance, ImFont* timeText){
     // cout << (backtesterInstance.getDayMaximum() - backtesterInstance.getDayMinimum()) << "\n";
     // cout << (backtesterInstance.getDayMinimum()) << "\n";
     
+    // graph plotting
     for(int minuteInfoIndex = 0; minuteInfoIndex < numTicker; minuteInfoIndex++){
-
-
         vector<minuteTickerInfo> tempInfo = backtesterInstance.getDayInfo();
 
         double minuteHigh = (tempInfo[minuteInfoIndex]).high;
         double minuteLow = (tempInfo[minuteInfoIndex]).low;
-        plotPoint(minuteHigh, minuteLow, minuteInfoIndex, backtesterInstance.getDayMaximum(), backtesterInstance.getDayMinimum(), draw_list, backtesterInstance);
+        plotPoint(minuteHigh, minuteLow, minuteInfoIndex, dayMax, dayMin, draw_list, backtesterInstance);
         
+    }
+
+    for(int markIndex = 0; markIndex < allOrderMarks.size(); markIndex++){
+        makeOrderMark(allOrderMarks[markIndex], dayMin, draw_list);
     }
 
     drawCurrentPrice(xPositionOfCurrentPrice, yPositionOfCurrentPrice, backtesterInstance, timeText);
@@ -247,6 +265,28 @@ void UseImGui::plotPoint(double high, double low, int minuteInfoIndex, int dayMa
     draw_list->AddLine(topCandle, bottomCandle, ImColor(white), 2.0f);
 }
 
+void UseImGui::makeOrderMark(orderMark orderMarkElement, int dayMin, ImDrawList *draw_list){
+    ImVec4 color;
+    centerScreen = ImGui::GetCursorScreenPos();
+
+    if(orderMarkElement.isBuyMark){
+        color = ImVec4(0.0f, 1.0f, 0.0f, 1.0f); // green
+    } else {
+        color = ImVec4(1.0f, 0.0f, 0.0f, 1.0f); //red
+    }
+    
+
+    const int xIndexDifference = 5;
+    int yPositionOfIndent = yPosOfXaxis - (heightPixelPerDollar * (orderMarkElement.priceOfOrder - dayMin));
+    int leftIndentX = xPosOfYaxis + (widthPixelsPerMinute * orderMarkElement.timeOfOrder) - xIndexDifference;
+    int rightIndentX = xPosOfYaxis + (widthPixelsPerMinute * orderMarkElement.timeOfOrder) + xIndexDifference;
+
+    ImVec2 leftIndent((leftIndentX), (yPositionOfIndent));
+    ImVec2 rightIndent((rightIndentX), (yPositionOfIndent));
+
+    draw_list->AddLine(leftIndent, rightIndent, ImColor(color), 2.0f);
+}
+
 void UseImGui::drawCurrentPrice(int xPositionOfCandle, int yCandleTop, Backtester backtesterInstance, ImFont* timeText ){
     ImVec2 priceOffset(25, 20);
 
@@ -257,4 +297,21 @@ void UseImGui::drawCurrentPrice(int xPositionOfCandle, int yCandleTop, Backteste
     ImGui::PushFont(timeText);
     ImGui::Text("$%f", backtesterInstance.getCurrentPrice());
     ImGui::PopFont();
+}
+
+void UseImGui::handleOrder(OrderType orderType, int totalNumOfMinutes, double currentPrice, string stockSymbol, string stringTimeOfOrder, int orderVolume) {
+    switch (orderType) {
+        case OrderType::MARKETBUY:
+            allOrderMarks.push_back(orderMark(totalNumOfMinutes, currentPrice, true, stockSymbol, stringTimeOfOrder, orderVolume));
+            break;
+        case OrderType::MARKETSELL:
+            allOrderMarks.push_back(orderMark(totalNumOfMinutes, currentPrice, false, stockSymbol, stringTimeOfOrder, orderVolume));
+            break;
+        case OrderType::LIMITBUY:
+            break;
+        case OrderType::LIMITSELL:
+            break;
+        case OrderType::NO_ORDER:
+            break;
+    }
 }

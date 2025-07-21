@@ -8,17 +8,17 @@
 Portfolio::Portfolio(double cashOnHand): 
     cashOnHand(cashOnHand), totalProfitLoss(0.0), totalValue(cashOnHand){}
 
-void Portfolio::sellStock(string stockSymbol, int volume, Backtester backtesterInstance){
+void Portfolio::sellStock(string stockSymbol, int volume, double currentPrice){
     int indexOfStock = findIndexOfStock(stockSymbol);
-    int changeInCash = stockPortfolio[indexOfStock].sellPosition(volume, backtesterInstance.getCurrentPrice());
-    totalProfitLoss += changeInCash;
+    int changeInCash = volume * currentPrice;
+    totalProfitLoss += stockPortfolio[indexOfStock].sellPosition(volume, currentPrice);;
     addCash(changeInCash);
 }
 
-void Portfolio::sellStockAll(string stockSymbol, Backtester backtesterInstance){
+void Portfolio::sellStockAll(string stockSymbol, double currentPrice){
     int indexOfStock = findIndexOfStock(stockSymbol);
 
-    int changeInCash = stockPortfolio[indexOfStock].sellPosition(stockPortfolio[indexOfStock].getTotalVolume(), backtesterInstance.getCurrentPrice());
+    int changeInCash = stockPortfolio[indexOfStock].sellPosition(stockPortfolio[indexOfStock].getTotalVolume(), currentPrice);
     totalProfitLoss += changeInCash;
     addCash(changeInCash);
 }
@@ -27,7 +27,11 @@ int Portfolio::findIndexOfStock(string stockSymbol){
     bool inBounds = true;
     bool foundIndex = false;
     int sizeOfStockPortfolio = stockPortfolio.size();
-    assert(sizeOfStockPortfolio > 1);
+    
+
+    if(sizeOfStockPortfolio < 1){
+        return notInPortfolio;
+    }
 
     int index = 0;
     int returnIndex;
@@ -47,10 +51,16 @@ int Portfolio::findIndexOfStock(string stockSymbol){
     return returnIndex;
 }
 
-void Portfolio::buyStock(string stockSymbol, int volume, Backtester backtesterInstance){
+void Portfolio::buyStock(string stockSymbol, int volume, double currentPrice){
     int indexOfStock = findIndexOfStock(stockSymbol);
-    stockPortfolio[indexOfStock].addPosition(volume, backtesterInstance.getCurrentPrice());
-    removeCash(volume * backtesterInstance.getCurrentPrice());
+
+    if(indexOfStock == notInPortfolio){
+        Stock apple(stockSymbol);
+        stockPortfolio.push_back(apple);
+        indexOfStock = 0;
+    }
+    stockPortfolio[indexOfStock].addPosition(volume, currentPrice);
+    removeCash(volume * currentPrice);
 }
 
 double Portfolio::getCashOnHand(){
@@ -62,14 +72,14 @@ void Portfolio::removeCash(double amount){
 void Portfolio::addCash(double amount){
     cashOnHand += amount;
 }
-double Portfolio::getTotalValue(Backtester backtesterInstance){
+double Portfolio::getTotalValue(double currentPrice){
 
     assert(stockPortfolio.size() > 0);
 
     double valueOfStocks;
 
     for(int i = 0; i < stockPortfolio.size(); i++){
-        valueOfStocks += backtesterInstance.getCurrentPrice() * stockPortfolio[i].getTotalVolume();
+        valueOfStocks += currentPrice * stockPortfolio[i].getTotalVolume();
     }
 
     totalValue = cashOnHand + valueOfStocks;
@@ -89,7 +99,8 @@ void Portfolio::printStockList(){
     }
 }
 
-vector<Stock> stockPortfolio;
-double totalValue;
-double cashOnHand;
-double totalProfitLoss;
+int Portfolio::getStockCount(string stockSymbol){
+    int indexOfStock = findIndexOfStock(stockSymbol);
+
+    return stockPortfolio[indexOfStock].getTotalVolume();
+}

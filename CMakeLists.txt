@@ -24,7 +24,6 @@ add_executable(${PROJECT_NAME}
     "src/backtester.cpp"
     "src/gui.cpp"
     "src/imGuiFunction.cpp"
-    "src/OperationShortApplication.cpp"
     "src/Portfolio.cpp"
     "src/Stock.cpp"
     "src/Strategy.cpp"
