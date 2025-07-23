@@ -84,7 +84,7 @@ int main() {
     //ms ratio, symbol, year, month, day
     Backtester backtesterInstance(10, "APPL", 2025, 7, 11);
     Strategy strategyInstance;
-    
+    strategyInstance.setOrderVolume(4);
 
     //while loop ---------------------------------------------------------
 
@@ -94,7 +94,7 @@ int main() {
         glClear(GL_COLOR_BUFFER_BIT);
 
          // feed inputs to dear imgui, start new frame
-        ImGui::LoadIniSettingsFromDisk("../my_ui_layout.ini");
+        ImGui::LoadIniSettingsFromDisk("../my_ui_layout.ini");        
         //----------------------------------------------------------------------------
 
         backtesterInstance.simulateMinute("APPL");
@@ -103,7 +103,7 @@ int main() {
         OrderType order = strategyInstance.waveRiding("APPL", backtesterInstance.getCurrentPrice(), backtesterInstance.getDayInfo());
         myimgui.handleOrder(order, backtesterInstance.getTotalNumOfMinutes(), backtesterInstance.getCurrentPrice(), backtesterInstance.getTickerSymbol(),  backtesterInstance.getCurrentTime(), strategyInstance.getOrderVolume());
         
-
+        
         //----------------------------------------------------------------------------
         // myimgui.NewFrame();
         ImGui_ImplOpenGL3_NewFrame();
@@ -112,15 +112,16 @@ int main() {
         
 
         //----------------------------------------------------------------------------
-        myimgui.graphWindow(backtesterInstance, timeText);
+        myimgui.graphWindow(backtesterInstance, timeText, strategyInstance);
        
 
         //----------------------------------------------------------------------------
 
         myimgui.logWindow(defaultFont, headerFont, logText, tempDayInfo);
-        
+
         //----------------------------------------------------------------------------
-        myimgui.plWindow(headerFont);
+        myimgui.plWindow(headerFont, strategyInstance.getPortfolio().getTotalProfitLoss());
+
         
         //----------------------------------------------------------------------------
         myimgui.Render();

@@ -18,6 +18,7 @@ class Portfolio {
         void addCash(double amount);
         double getTotalValue(double currentPrice);
         vector<Stock> getStockList();
+        double getTotalProfitLoss();
         void printStockList();
         int getStockCount(string stockSymbol);
 

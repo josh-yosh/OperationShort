@@ -106,6 +106,7 @@
     "vector": "cpp",
     "algorithm": "cpp",
     "__config": "cpp",
-    "list": "cpp"
+    "list": "cpp",
+    "forward_list": "cpp"
   }
 }

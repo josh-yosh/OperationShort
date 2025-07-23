@@ -6,11 +6,12 @@
 #include <iostream>
 
 Portfolio::Portfolio(double cashOnHand): 
-    cashOnHand(cashOnHand), totalProfitLoss(0.0), totalValue(cashOnHand){}
+    cashOnHand(cashOnHand), totalProfitLoss(0.0), totalValue(cashOnHand), stockPortfolio(){}
+
 
 void Portfolio::sellStock(string stockSymbol, int volume, double currentPrice){
     int indexOfStock = findIndexOfStock(stockSymbol);
-    int changeInCash = volume * currentPrice;
+    double changeInCash = volume * currentPrice;
     totalProfitLoss += stockPortfolio[indexOfStock].sellPosition(volume, currentPrice);;
     addCash(changeInCash);
 }
@@ -18,7 +19,7 @@ void Portfolio::sellStock(string stockSymbol, int volume, double currentPrice){
 void Portfolio::sellStockAll(string stockSymbol, double currentPrice){
     int indexOfStock = findIndexOfStock(stockSymbol);
 
-    int changeInCash = stockPortfolio[indexOfStock].sellPosition(stockPortfolio[indexOfStock].getTotalVolume(), currentPrice);
+    double changeInCash = stockPortfolio[indexOfStock].sellPosition(stockPortfolio[indexOfStock].getTotalVolume(), currentPrice);
     totalProfitLoss += changeInCash;
     addCash(changeInCash);
 }
@@ -97,6 +98,10 @@ void Portfolio::printStockList(){
             stockPortfolio[i].printPositions();
         }
     }
+}
+
+double Portfolio::getTotalProfitLoss(){
+    return totalProfitLoss;
 }
 
 int Portfolio::getStockCount(string stockSymbol){

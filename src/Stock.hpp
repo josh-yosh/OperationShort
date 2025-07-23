@@ -5,6 +5,14 @@
 
 using namespace std;
 
+struct position{
+    int volume;
+    double buyPrice;
+
+    position(int volume, double buyPrice) : 
+        volume(volume), buyPrice(buyPrice){}
+};
+
 
 
 class Stock{
@@ -21,19 +29,9 @@ class Stock{
 
         void printPositions();
 
-        struct position{
-            int volume;
-            double buyPrice;
-
-            position(int volume, double buyPrice) : 
-                volume(volume), buyPrice(buyPrice){}
-        };
-
-
     private:
         vector<position> positions;
         int totalVolume;
-        double totalStockValue;
         double priceBasis;
         double totalProfitLoss;
         string name;

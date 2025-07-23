@@ -5,6 +5,7 @@
 #include <imgui_impl_opengl3.h>
 #include <vector>
 #include "backtester.hpp"
+#include "Strategy.hpp"
 
 struct PlotPoint{
     int holding;
@@ -32,9 +33,9 @@ public:
     void NewFrame();
     void Render();
     void Shutdown();
-    void graphWindow(Backtester backtesterInstance, ImFont* timeText);
+    void graphWindow(Backtester backtesterInstance, ImFont* timeText, Strategy strategyInstance);
     void logWindow(ImFont* defaultFont, ImFont* headerFont, ImFont* logText, vector<minuteTickerInfo> tempDayInfo);
-    void plWindow(ImFont* headerFont);
+    void plWindow(ImFont* headerFont, double currentProfitLoss);
     void makeGraph(Backtester backtesterInstance, ImFont* timeText);
     void plotPoint(double high, double low, int numTicker, int dayMax, int dayMin, ImDrawList *draw_list, Backtester backtesterInstance);
     void drawCurrentPrice(int xPositionOfCandle ,int yCandleTop, Backtester backtesterInstance, ImFont* timeText);

@@ -38,7 +38,7 @@ void UseImGui::NewFrame(){
     ImGui::NewFrame();
 }
 
-void UseImGui::graphWindow(Backtester backtesterInstance, ImFont* timeText){
+void UseImGui::graphWindow(Backtester backtesterInstance, ImFont* timeText, Strategy strategyInstance){
     ImGui::SetNextWindowSizeConstraints(ImVec2(1225,850), ImVec2(1225,850));
     ImGui::SetNextWindowPos(ImVec2(0, 0), ImGuiCond_Once);
 
@@ -52,13 +52,10 @@ void UseImGui::graphWindow(Backtester backtesterInstance, ImFont* timeText){
     ImGui::SetCursorPos(ImVec2(30, 20));
     ImGui::PushFont(timeText);
     ImGui::Text("Time: %s", backtesterInstance.getCurrentTime());
-    ImGui::PopFont();
 
     ImGui::SetCursorPos(ImVec2(200, 20));
-    ImGui::PushFont(timeText);
     ImGui::Text("Current Price $%f", backtesterInstance.getCurrentPrice());
     ImGui::PopFont();
-
 
     //add high and low later
 
@@ -114,7 +111,7 @@ void UseImGui::logWindow(ImFont* defaultFont, ImFont* headerFont, ImFont* logTex
         ImGui::End();
 }
 
-void UseImGui::plWindow(ImFont* headerFont){
+void UseImGui::plWindow(ImFont* headerFont, double currentProfitLoss){
     ImGui::SetNextWindowSizeConstraints(ImVec2(240,50), ImVec2(240,50));
     ImGui::SetNextWindowPos(ImVec2(920, 35), ImGuiCond_Once);
     bool p_open_false = false;
@@ -128,7 +125,7 @@ void UseImGui::plWindow(ImFont* headerFont){
     ImGui::SameLine();
 
     ImGui::PushStyleColor(ImGuiCol_Text, ImVec4(0.0f, 1.0f, 0.0f, 1.0f));
-    ImGui::Text("$200.43");
+    ImGui::Text("$%02.2f", currentProfitLoss);
     ImGui::PopStyleColor();
 
     ImGui::PopFont();
@@ -140,7 +137,7 @@ void UseImGui::Render(){
     // Render dear imgui into screen
 	ImGui::Render();
 	ImGui_ImplOpenGL3_RenderDrawData(ImGui::GetDrawData());
-};
+}
 void UseImGui::Shutdown(){
     // Cleanup
 	ImGui_ImplOpenGL3_Shutdown();

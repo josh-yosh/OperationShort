@@ -5,11 +5,8 @@
 #include <stdbool.h>
 #include <iostream>
 
-Stock::Stock(string name):
-    name(name)
-{
-
-}
+Stock::Stock(string name): // fix name to be ticker symbold
+    name(name), totalVolume(0), priceBasis(0.0), totalProfitLoss(0.0), positions(){}
 
 void Stock::addPosition(int volume, double buyPrice){
     priceBasis += volume * buyPrice;
@@ -17,25 +14,35 @@ void Stock::addPosition(int volume, double buyPrice){
     positions.push_back(position(volume, buyPrice));
 }
 
-double Stock::sellPosition(int volume, double sellPrice){ // FIX THIS RECURSION, SOMETHING IS WRONG HERE 
+double Stock::sellPosition(int volume, double sellPrice){ // volume cannot be larger than how much we have
     int mostRecentBuyVolume = positions.back().volume;
-    bool mostRecentBuyVolumeLessThanSellVolume = mostRecentBuyVolume < volume;
-    double profitLoss;
-    double cashFromSell;
+    bool mostRecentBuyVolumeLessThanOrEqualSellVolume = mostRecentBuyVolume <= volume;
 
-    if(mostRecentBuyVolumeLessThanSellVolume){
-        positions.back().volume -= volume;
-        profitLoss = (volume * sellPrice) - (volume * positions.back().buyPrice);
-        cashFromSell +=
-        totalProfitLoss = profitLoss;
-        return profitLoss;
+    double cashFromSell = volume * sellPrice; // total amount of money the stock is worth
+    double costBasisOfSoldShares;
+    
+    while(mostRecentBuyVolumeLessThanOrEqualSellVolume){
+        volume -= mostRecentBuyVolume;
+        totalVolume -= mostRecentBuyVolume;
+        costBasisOfSoldShares += mostRecentBuyVolume * positions.back().buyPrice;
+        
+        positions.pop_back();
+        
+        bool positionSizeNotZero = !(positions.size() == 0);
+        if(positionSizeNotZero){
+            mostRecentBuyVolume = positions.back().volume;
+            mostRecentBuyVolumeLessThanOrEqualSellVolume = mostRecentBuyVolume <= volume;
+        } else {
+            mostRecentBuyVolumeLessThanOrEqualSellVolume = false;
+        }
     }
 
-    profitLoss = (volume * sellPrice) - (volume * positions.back().buyPrice);
-    int leftOverSellVolume = volume - positions.back().volume;
-    positions.pop_back();
-    
-    return profitLoss + sellPosition(leftOverSellVolume, sellPrice);
+    positions.back().volume -= volume;
+    totalVolume -= volume;
+    costBasisOfSoldShares += volume * positions.back().buyPrice;
+
+    double profitLoss = cashFromSell - costBasisOfSoldShares;
+    return profitLoss;
 }
 
 double Stock::getTotalStockPrice(double currentPrice){

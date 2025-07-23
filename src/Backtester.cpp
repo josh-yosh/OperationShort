@@ -14,7 +14,8 @@ using namespace std;
 Backtester::Backtester(int timeRatioMsToSec, string tickerSymbol, int simulatedYear, int simulatedMonth, int simulatedDay)
     : timeRatioMsToSec(timeRatioMsToSec), tickerSymbol(tickerSymbol), 
     simulatedYear(simulatedYear), simulatedMonth(simulatedMonth), simulatedDay(simulatedDay), simulatedHour(13), simulatedMin(30), 
-    timeEnd(false), totalNumOfMinutes(0), dayMinimum(0.0), dayMaximum(0.0)
+    timeEnd(false), totalNumOfMinutes(0), dayMinimum(0.0), dayMaximum(0.0), 
+    stockPrice(0.0), position(), dayInfo()
 { //need to add algorithm in later as parameter
     startTime = steady_clock::now();
 }

@@ -2,8 +2,7 @@
 #include "UsingImGui.h"
 #include "OrderTypeEnum.hpp"
 
-Strategy::Strategy(): portfolio(1000), availableToBuy(true){
-    
+Strategy::Strategy(): portfolio(1000), availableToBuy(true), dayInfo(), previousCloseMinuteClose(0.0){
 }
 
 void Strategy::buy(string stockSymbol, int volume, double currentPrice){
@@ -19,13 +18,20 @@ void Strategy::sell(string stockSymbol, int volume, double currentPrice){
 int Strategy::getOrderVolume(){
     return orderVolume;
 }
-OrderType Strategy::waveRiding(string stockSymbol, double currentPrice, vector<minuteTickerInfo> dayInfo){
-    this->dayInfo = dayInfo;
+void Strategy::setOrderVolume(int orderVolume){
+    this->orderVolume = orderVolume;
+}
+Portfolio Strategy::getPortfolio(){
+    return portfolio;
+}
 
+OrderType Strategy::waveRiding(string stockSymbol, double currentPrice, vector<minuteTickerInfo> dayInfo){
     if(dayInfo.size() == 1){
         peakOrDipPrice = dayInfo[0].close;
+        this->dayInfo = dayInfo;
     }
     if(dayInfo.size() > 2){
+        this->dayInfo = dayInfo;
         double mostRecentClosePrice = dayInfo.back().close;
         int totalPossibleBuyAmount = int (portfolio.getCashOnHand() / currentPrice);
         if(mostRecentClosePrice > peakOrDipPrice && availableToBuy){

@@ -15,6 +15,8 @@ class Strategy{
         void sell(string stockSymbol, int volume, double currentPrice);
         OrderType waveRiding(string stockSymbol, double currentPrice, vector<minuteTickerInfo> dayInfo); 
         int getOrderVolume();
+        void setOrderVolume(int orderVolume);
+        Portfolio getPortfolio();
 
     private:
         Portfolio portfolio;
