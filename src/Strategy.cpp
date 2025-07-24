@@ -2,8 +2,8 @@
 #include "UsingImGui.h"
 #include "OrderTypeEnum.hpp"
 
-Strategy::Strategy(): portfolio(1000), availableToBuy(true), dayInfo(), previousCloseMinuteClose(0.0){
-}
+Strategy::Strategy(double startingCash):
+    startingCash(startingCash), portfolio(startingCash), availableToBuy(true), dayInfo(), previousCloseMinuteClose(0.0){}
 
 void Strategy::buy(string stockSymbol, int volume, double currentPrice){
     portfolio.buyStock(stockSymbol, volume, currentPrice);
@@ -17,6 +17,9 @@ void Strategy::sell(string stockSymbol, int volume, double currentPrice){
 
 int Strategy::getOrderVolume(){
     return orderVolume;
+}
+double Strategy::getStartingCash(){
+    return startingCash;
 }
 void Strategy::setOrderVolume(int orderVolume){
     this->orderVolume = orderVolume;

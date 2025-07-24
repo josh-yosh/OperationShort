@@ -317,3 +317,55 @@ void UseImGui::handleOrder(OrderType orderType, int totalNumOfMinutes, double cu
             break;
     }
 }
+
+void UseImGui::scoreScreen(ImFont* headerFont, Strategy strategyInstance){
+    double percentReturn = (strategyInstance.getPortfolio().getTotalProfitLoss()/strategyInstance.getStartingCash()) * 100;
+    double profitLoss = strategyInstance.getPortfolio().getTotalProfitLoss();
+
+    ImVec4 colorForPercent;
+    ImVec4 colorForProfitAndLoss;
+    centerScreen = ImGui::GetCursorScreenPos();
+
+    //if profit/loss is neg, then red. if pos then green
+    if(percentReturn > 0){
+        colorForPercent = ImVec4(0.0f, 1.0f, 0.0f, 1.0f); // green
+    } else {
+        colorForPercent = ImVec4(1.0f, 0.0f, 0.0f, 1.0f); //red
+    }
+
+    if(profitLoss > 0){
+        colorForProfitAndLoss = ImVec4(0.0f, 1.0f, 0.0f, 1.0f); // green
+    } else {
+        colorForProfitAndLoss = ImVec4(1.0f, 0.0f, 0.0f, 1.0f); //red
+    }
+
+    ImGui::SetNextWindowSizeConstraints(ImVec2(520, 180), ImVec2(520, 180));   //changes window size constraing
+        ImGui::SetNextWindowPos(ImVec2(500, 150), ImGuiCond_Once);
+        ImGui::Begin("Final Score", nullptr, ImGuiWindowFlags_NoTitleBar | ImGuiWindowFlags_NoScrollbar); //make in middle
+        
+        
+        ImGui::SetCursorPos(ImVec2(30, 20));
+        ImGui::PushFont(headerFont);
+        ImGui::Text("Final Score:");
+
+
+        ImGui::PushStyleColor(ImGuiCol_Border, ImVec4(1.0f, 1.0f, 1.0f, 1.0f));
+        ImGui::BeginChild("Result Screen", ImVec2(505, 100), true, ImGuiChildFlags_Borders | ImGuiWindowFlags_NoScrollbar);
+
+
+        ImGui::PushStyleColor(ImGuiCol_Text, colorForPercent);
+        ImGui::SetCursorPos(ImVec2(10, 10));
+        ImGui::Text("Percent Return: %%%f", percentReturn);
+        ImGui::PopStyleColor();
+
+        ImGui::PushStyleColor(ImGuiCol_Text, colorForProfitAndLoss);
+        ImGui::SetCursorPos(ImVec2(10, 50));
+        ImGui::Text("Dollar Return: $%f", profitLoss);
+        ImGui::PopStyleColor();
+        ImGui::PopFont();
+
+        ImGui::PopStyleColor();
+
+        ImGui::EndChild();
+        ImGui::End();
+}

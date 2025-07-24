@@ -60,6 +60,10 @@ double Backtester::getCurrentPrice(){ //most recenet minute info's close price
     return dayInfo.back().close;
 }
 
+bool Backtester::getIsEnd(){
+    return timeEnd;
+}
+
 void Backtester::setInitialMinAndMax(minuteTickerInfo tempTickerInfo){ 
     dayMinimum = tempTickerInfo.close - 2; //sets the first close as the middle price
     dayMaximum = tempTickerInfo.close + 2;

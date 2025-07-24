@@ -10,13 +10,14 @@
 class Strategy{
 
     public:
-        Strategy();
+        Strategy(double startingCash);
         void buy(string stockSymbol, int volume, double currentPrice);
         void sell(string stockSymbol, int volume, double currentPrice);
         OrderType waveRiding(string stockSymbol, double currentPrice, vector<minuteTickerInfo> dayInfo); 
         int getOrderVolume();
         void setOrderVolume(int orderVolume);
         Portfolio getPortfolio();
+        double getStartingCash();
 
     private:
         Portfolio portfolio;
@@ -25,6 +26,7 @@ class Strategy{
         bool availableToBuy;
         double peakOrDipPrice;
         int orderVolume;
+        double startingCash;
 
        
 };

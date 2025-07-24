@@ -80,7 +80,7 @@ int main() {
     //backtester instance---------------------------------------------------------
     //ms ratio, symbol, year, month, day
     Backtester backtesterInstance(10, "APPL", 2025, 7, 22);
-    Strategy strategyInstance;
+    Strategy strategyInstance(1000);
 
     //inital minute value
     backtesterInstance.pushToDayInfo(backtesterInstance.pullMinuteTickerInfo("APPL"));
@@ -124,7 +124,9 @@ int main() {
 
         //----------------------------------------------------------------------------
         
-
+        if(backtesterInstance.getIsEnd()){
+            myimgui.scoreScreen(headerFont, strategyInstance);
+        }
         
         //----------------------------------------------------------------------------
         myimgui.Render();

@@ -24,12 +24,13 @@ double Stock::sellPosition(int volume, double sellPrice){ // volume cannot be la
     //we go from the top of the stack and pop until we run out of volume needed to sell, or in other words
     //until our order is fufilled
     while(mostRecentBuyVolumeLessThanOrEqualSellVolume){
+        //selling most recent position
         volume -= mostRecentBuyVolume;
         totalVolume -= mostRecentBuyVolume;
-        costBasisOfSoldShares += mostRecentBuyVolume * positions.back().buyPrice;
-        
+        costBasisOfSoldShares += mostRecentBuyVolume * positions.back().buyPrice; 
         positions.pop_back();
         
+        //if we end at 0, we end. if not zero, continue loop
         bool positionSizeNotZero = !(positions.size() == 0);
         if(positionSizeNotZero){
             mostRecentBuyVolume = positions.back().volume;
