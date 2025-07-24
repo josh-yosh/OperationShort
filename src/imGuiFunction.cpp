@@ -4,7 +4,7 @@
 
 bool UseImGui::scrollToBottom = false;
 
-void UseImGui::Init(GLFWwindow* window, const char* glsl_version){
+void UseImGui::Init(GLFWwindow* window, const char* glsl_version){ 
     IMGUI_CHECKVERSION();
     ImGui::CreateContext();
     ImGui::CreateContext();
@@ -12,6 +12,7 @@ void UseImGui::Init(GLFWwindow* window, const char* glsl_version){
 };
 
 UseImGui::UseImGui(ImGuiIO &io): io(io) {
+    //graph coordinatnes
     xPosOfYaxis = 5;
     yPosOfXaxis = 725;
     xPosOfXaxisEnd = 1175;
@@ -39,17 +40,17 @@ void UseImGui::NewFrame(){
     ImGui::NewFrame();
 }
 
-void UseImGui::graphWindow(Backtester backtesterInstance, ImFont* timeText, Strategy strategyInstance){
-    ImGui::SetNextWindowSizeConstraints(ImVec2(1225,850), ImVec2(1225,850));
-    ImGui::SetNextWindowPos(ImVec2(0, 0), ImGuiCond_Once);
+void UseImGui::graphWindow(Backtester backtesterInstance, ImFont* timeText, ImFont* headerFont, Strategy strategyInstance){
+    ImGui::SetNextWindowSizeConstraints(ImVec2(1225,850), ImVec2(1225,850)); //window size
+    ImGui::SetNextWindowPos(ImVec2(0, 0), ImGuiCond_Once); //window posisiotn
 
     ImGui::Begin("Graph");
 
     ImGui::PushStyleColor(ImGuiCol_Border, ImVec4(1.0f, 1.0f, 1.0f, 1.0f));
     ImGui::BeginChild("Graph of Price", ImVec2(1200, 800), ImGuiChildFlags_Borders);
-    makeGraph(backtesterInstance, timeText);
+    makeGraph(backtesterInstance, timeText); //makes the graph
 
-    //making top legend thing
+    //making top legend thing -------------------------------------------
     ImGui::SetCursorPos(ImVec2(30, 20));
     ImGui::PushFont(timeText);
     ImGui::Text("Time: %s", backtesterInstance.getCurrentTime());
@@ -58,11 +59,12 @@ void UseImGui::graphWindow(Backtester backtesterInstance, ImFont* timeText, Stra
     ImGui::Text("Current Price $%f", backtesterInstance.getCurrentPrice());
     ImGui::PopFont();
 
-    //add high and low later
-
-
+    plWindow(headerFont, strategyInstance.getPortfolio().getTotalProfitLoss());
+    
     ImGui::PopStyleColor();
     ImGui::EndChild();
+
+    //--------------------------------------------------------------------
 
     ImGui::End();
 }
@@ -71,7 +73,7 @@ void UseImGui::logWindow(ImFont* defaultFont, ImFont* headerFont, ImFont* logTex
 
    ImGui::SetNextWindowSizeConstraints(ImVec2(315,800), ImVec2(315,800));   //changes window size constraing
         ImGui::SetNextWindowPos(ImVec2(1225, 0), ImGuiCond_Once);
-        ImGui::Begin("Log");                          // Create a window called "Conan Logo" and append into it.
+        ImGui::Begin("Log");                       
 
         ImGui::PushFont(defaultFont);
 
@@ -81,14 +83,14 @@ void UseImGui::logWindow(ImFont* defaultFont, ImFont* headerFont, ImFont* logTex
         
         
 
-        ImGui::PushStyleColor(ImGuiCol_ChildBg, ImVec4(0.1f, 0.1f, 0.1f, 1.0f));
-        ImGui::PushStyleColor(ImGuiCol_Border, ImVec4(1.0f, 1.0f, 1.0f, 1.0f));
-        ImGui::BeginChild("Scrolling", ImVec2(300, 725), ImGuiChildFlags_Borders || ImGuiWindowFlags_AlwaysVerticalScrollbar);
+        ImGui::PushStyleColor(ImGuiCol_ChildBg, ImVec4(0.1f, 0.1f, 0.1f, 1.0f)); //background color
+        ImGui::PushStyleColor(ImGuiCol_Border, ImVec4(1.0f, 1.0f, 1.0f, 1.0f));  //border color
+        ImGui::BeginChild("Scrolling", ImVec2(300, 725), ImGuiChildFlags_Borders || ImGuiWindowFlags_AlwaysVerticalScrollbar); 
 
         ImGui::PopFont();
         ImGui::PushFont(logText);
 
-        
+        //logs -------------------------------------------------------------------
 
         for (int i = 0; i < allOrderMarks.size(); i++){
             ImVec4 color;
@@ -104,12 +106,16 @@ void UseImGui::logWindow(ImFont* defaultFont, ImFont* headerFont, ImFont* logTex
             ImGui::PopStyleColor();
         }
 
-        if (scrollToBottom){
+        if (scrollToBottom){ //if newly added, scroll to bottom, then stop scrolling until next added item
             ImGui::SetScrollHereY(1.0f);
             scrollToBottom = false;
         }
 
+        //logs -------------------------------------------------------------------
+
+
         ImGui::PopFont();
+        
 
         ImGui::PopStyleColor();
         ImGui::PopStyleColor(); //poping child background
@@ -119,25 +125,34 @@ void UseImGui::logWindow(ImFont* defaultFont, ImFont* headerFont, ImFont* logTex
 }
 
 void UseImGui::plWindow(ImFont* headerFont, double currentProfitLoss){
-    ImGui::SetNextWindowSizeConstraints(ImVec2(240,50), ImVec2(240,50));
-    ImGui::SetNextWindowPos(ImVec2(920, 35), ImGuiCond_Once);
-    bool p_open_false = false;
-    ImGui::PushStyleColor(ImGuiCol_Border, ImVec4(1.0f, 1.0f, 1.0f, 1.0f));
 
-    ImGui::Begin("Profit and Loss", &p_open_false, ImGuiWindowFlags_NoTitleBar | ImGuiWindowFlags_NoScrollbar);
+     ImVec4 color;
+    centerScreen = ImGui::GetCursorScreenPos();
+
+    //if profit/loss is neg, then red. if pos then green
+    if(currentProfitLoss > 0){
+        color = ImVec4(0.0f, 1.0f, 0.0f, 1.0f); // green
+    } else {
+        color = ImVec4(1.0f, 0.0f, 0.0f, 1.0f); //red
+    }
+
+    ImGui::SameLine();
+    ImGui::SetCursorPos(ImVec2(950, 5));
+    ImGui::PushStyleColor(ImGuiCol_Border, ImVec4(1.0f, 1.0f, 1.0f, 1.0f));
+    ImGui::BeginChild("Profit and Loss", ImVec2(200, 50), true, ImGuiWindowFlags_NoTitleBar | ImGuiWindowFlags_NoScrollbar);
     ImGui::PopStyleColor();
 
     ImGui::PushFont(headerFont);
     ImGui::Text("P/L:");
     ImGui::SameLine();
 
-    ImGui::PushStyleColor(ImGuiCol_Text, ImVec4(0.0f, 1.0f, 0.0f, 1.0f));
+    ImGui::PushStyleColor(ImGuiCol_Text, (color));
     ImGui::Text("$%02.2f", currentProfitLoss);
     ImGui::PopStyleColor();
 
     ImGui::PopFont();
 
-    ImGui::End();
+    ImGui::EndChild();
 }
 
 void UseImGui::Render(){
@@ -145,6 +160,7 @@ void UseImGui::Render(){
 	ImGui::Render();
 	ImGui_ImplOpenGL3_RenderDrawData(ImGui::GetDrawData());
 }
+
 void UseImGui::Shutdown(){
     // Cleanup
 	ImGui_ImplOpenGL3_Shutdown();
@@ -153,6 +169,7 @@ void UseImGui::Shutdown(){
 };
 
 void UseImGui::makeGraph(Backtester backtesterInstance, ImFont* timeText){
+    //coordinatnes
     centerScreen = ImGui::GetCursorScreenPos();
     xPosOfYaxis = 5 + centerScreen.x;
     yPosOfXaxis = 725 + centerScreen.y;
@@ -178,9 +195,9 @@ void UseImGui::makeGraph(Backtester backtesterInstance, ImFont* timeText){
     double dayMaxAndMinDifference = (backtesterInstance.getDayMaximum() - backtesterInstance.getDayMinimum());
 
     numTicker = backtesterInstance.getTotalNumOfMinutes();
-    heightPixelPerDollar = (heightOfGraph/(backtesterInstance.getDayMaximum() - backtesterInstance.getDayMinimum()));
+    //ratio for dollar per pixel
+    heightPixelPerDollar = (heightOfGraph/(backtesterInstance.getDayMaximum() - backtesterInstance.getDayMinimum())); 
 
-    
     yNumOfIndents = int (dayMaxAndMinDifference);
 
     int widthBetweenIndents = (xPosOfXaxisEnd-xPosOfYaxis)/xNumOfIndents;
@@ -231,12 +248,7 @@ void UseImGui::makeGraph(Backtester backtesterInstance, ImFont* timeText){
         draw_list->AddLine(leftIndent, rightIndent, ImColor(white), 3.0f);
     }
 
-    // cout << heightPixelPerDollar << "\n";
-    // cout << heightOfGraph << "\n";
-    // cout << (backtesterInstance.getDayMaximum() - backtesterInstance.getDayMinimum()) << "\n";
-    // cout << (backtesterInstance.getDayMinimum()) << "\n";
-    
-    // graph plotting
+    // graph plotting for each minute high and low
     for(int minuteInfoIndex = 0; minuteInfoIndex < numTicker; minuteInfoIndex++){
         vector<minuteTickerInfo> tempInfo = backtesterInstance.getDayInfo();
 
@@ -248,10 +260,6 @@ void UseImGui::makeGraph(Backtester backtesterInstance, ImFont* timeText){
 
     for(int markIndex = 0; markIndex < allOrderMarks.size(); markIndex++){
         makeOrderMark(allOrderMarks[markIndex], dayMin, draw_list);
-    }
-
-    if(backtesterInstance.getDayInfo().size() > 0){
-        drawCurrentPrice(xPositionOfCurrentPrice, yPositionOfCurrentPrice, backtesterInstance, timeText);
     }
 }
 
@@ -267,10 +275,6 @@ void UseImGui::plotPoint(double high, double low, int minuteInfoIndex, double da
     ImVec2 topCandle(xPositionOfCandle, (yCandleTop));
     ImVec2 bottomCandle(xPositionOfCandle, (yCandleBottom));
    
-    // cout<< "xPositionOfCandle: "<< xPositionOfCandle << "\n";
-    // cout<< "yCandleTop: "<< yCandleTop << "\n";
-    // cout<< "yCandleBottom: "<< yCandleBottom << "\n";
-
     draw_list->AddLine(topCandle, bottomCandle, ImColor(white), 2.0f);
 }
 
@@ -283,7 +287,6 @@ void UseImGui::makeOrderMark(orderMark orderMarkElement, double dayMin, ImDrawLi
     } else {
         color = ImVec4(1.0f, 0.0f, 0.0f, 1.0f); //red
     }
-    
 
     const int xIndexDifference = 5;
     int yPositionOfIndent = yPosOfXaxis - (heightPixelPerDollar * (orderMarkElement.priceOfOrder - dayMin));
@@ -294,18 +297,6 @@ void UseImGui::makeOrderMark(orderMark orderMarkElement, double dayMin, ImDrawLi
     ImVec2 rightIndent((rightIndentX), (yPositionOfIndent));
 
     draw_list->AddLine(leftIndent, rightIndent, ImColor(color), 2.0f);
-}
-
-void UseImGui::drawCurrentPrice(int xPositionOfCandle, int yCandleTop, Backtester backtesterInstance, ImFont* timeText ){
-    ImVec2 priceOffset(25, 20);
-
-
-    ImGui::SetCursorPos(ImVec2(((xPositionOfCandle - centerScreen.x) + priceOffset.x), ((yCandleTop - centerScreen.y) + priceOffset.y)));
-    
-    
-    ImGui::PushFont(timeText);
-    ImGui::Text("$%f", backtesterInstance.getCurrentPrice());
-    ImGui::PopFont();
 }
 
 void UseImGui::handleOrder(OrderType orderType, int totalNumOfMinutes, double currentPrice, string stockSymbol, string stringTimeOfOrder, int orderVolume) {

@@ -26,6 +26,7 @@ Portfolio Strategy::getPortfolio(){
 }
 
 OrderType Strategy::waveRiding(string stockSymbol, double currentPrice, vector<minuteTickerInfo> dayInfo){
+    
     if(dayInfo.size() == 1){
         peakOrDipPrice = dayInfo[0].close;
         this->dayInfo = dayInfo;
@@ -34,12 +35,12 @@ OrderType Strategy::waveRiding(string stockSymbol, double currentPrice, vector<m
         this->dayInfo = dayInfo;
         double mostRecentClosePrice = dayInfo.back().close;
         int totalPossibleBuyAmount = int (portfolio.getCashOnHand() / currentPrice);
-        if(mostRecentClosePrice > peakOrDipPrice && availableToBuy){
+        if(mostRecentClosePrice > peakOrDipPrice && availableToBuy){ //if the previous price is lower than the current price, buy
             orderVolume = totalPossibleBuyAmount;
             buy(stockSymbol, totalPossibleBuyAmount, currentPrice);
             availableToBuy = false;
             return OrderType::MARKETBUY; 
-        } else if (mostRecentClosePrice < peakOrDipPrice && !availableToBuy){
+        } else if (mostRecentClosePrice < peakOrDipPrice && !availableToBuy){ //if the previous price is less than the current price, sell
             orderVolume = portfolio.getStockCount(stockSymbol);
             sell(stockSymbol, portfolio.getStockCount(stockSymbol), currentPrice);
             availableToBuy = true;

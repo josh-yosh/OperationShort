@@ -10,10 +10,10 @@ Portfolio::Portfolio(double cashOnHand):
 
 
 void Portfolio::sellStock(string stockSymbol, int volume, double currentPrice){
-    int indexOfStock = findIndexOfStock(stockSymbol);
-    double changeInCash = volume * currentPrice;
-    totalProfitLoss += stockPortfolio[indexOfStock].sellPosition(volume, currentPrice);;
-    addCash(changeInCash);
+    int indexOfStock = findIndexOfStock(stockSymbol); //finds index of stock
+    double changeInCash = volume * currentPrice; //finds the change in cash
+    totalProfitLoss += stockPortfolio[indexOfStock].sellPosition(volume, currentPrice); //alters the profit and loss
+    addCash(changeInCash); //adds the amount made to the total cash on hand
 }
 
 void Portfolio::sellStockAll(string stockSymbol, double currentPrice){
@@ -39,7 +39,7 @@ int Portfolio::findIndexOfStock(string stockSymbol){
 
     while(!foundIndex && inBounds){
         if(index == sizeOfStockPortfolio){
-            returnIndex = -1;
+            returnIndex = notInPortfolio;
             inBounds = false;
         } else {
             foundIndex = stockPortfolio[index].getName() == stockSymbol;
@@ -79,10 +79,11 @@ double Portfolio::getTotalValue(double currentPrice){
 
     double valueOfStocks;
 
+    //goes for each stock and finds total volume to find total value of stock portfolio
     for(int i = 0; i < stockPortfolio.size(); i++){
         valueOfStocks += currentPrice * stockPortfolio[i].getTotalVolume();
     }
-
+    
     totalValue = cashOnHand + valueOfStocks;
     return totalValue;
 }

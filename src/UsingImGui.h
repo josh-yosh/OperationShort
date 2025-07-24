@@ -33,7 +33,7 @@ public:
     void NewFrame();
     void Render();
     void Shutdown();
-    void graphWindow(Backtester backtesterInstance, ImFont* timeText, Strategy strategyInstance);
+    void graphWindow(Backtester backtesterInstance, ImFont* timeText, ImFont* headerFont, Strategy strategyInstance);
     void logWindow(ImFont* defaultFont, ImFont* headerFont, ImFont* logText, vector<minuteTickerInfo> tempDayInfo);
     void plWindow(ImFont* headerFont, double currentProfitLoss);
     void makeGraph(Backtester backtesterInstance, ImFont* timeText);

@@ -57,8 +57,6 @@ int main() {
 
     //setting up context, io, and  myimgui object -------------------------------
 
-    
-
     IMGUI_CHECKVERSION();
     ImGui::CreateContext();
     ImGuiIO &io = ImGui::GetIO();
@@ -68,7 +66,6 @@ int main() {
     // Setup Platform/RendererBindings
     ImGui_ImplGlfw_InitForOpenGL(window, true);
     ImGui_ImplOpenGL3_Init(glsl_version);
-
 
     //---------------------------------------------------------------------------
     //AddFontFromFileTTF(const char* filename, float size_pixels, const ImFontConfig* font_cfg = NULL, const ImWchar* glyph_ranges = NULL);
@@ -84,6 +81,8 @@ int main() {
     //ms ratio, symbol, year, month, day
     Backtester backtesterInstance(10, "APPL", 2025, 7, 22);
     Strategy strategyInstance;
+
+    //inital minute value
     backtesterInstance.pushToDayInfo(backtesterInstance.pullMinuteTickerInfo("APPL"));
     backtesterInstance.incrementSimulatedMinute();
 
@@ -103,6 +102,7 @@ int main() {
         backtesterInstance.simulateMinute("APPL");
         vector<minuteTickerInfo> tempDayInfo = backtesterInstance.getDayInfo();
 
+        //uses the strategy 
         OrderType order = strategyInstance.waveRiding("APPL", backtesterInstance.getCurrentPrice(), backtesterInstance.getDayInfo());
         myimgui.handleOrder(order, backtesterInstance.getTotalNumOfMinutes(), backtesterInstance.getCurrentPrice(), backtesterInstance.getTickerSymbol(),  backtesterInstance.getCurrentTime(), strategyInstance.getOrderVolume());
         
@@ -115,7 +115,7 @@ int main() {
         
 
         //----------------------------------------------------------------------------
-        myimgui.graphWindow(backtesterInstance, timeText, strategyInstance);
+        myimgui.graphWindow(backtesterInstance, timeText, headerFont, strategyInstance);
        
 
         //----------------------------------------------------------------------------
@@ -123,7 +123,7 @@ int main() {
         myimgui.logWindow(defaultFont, headerFont, logText, tempDayInfo);
 
         //----------------------------------------------------------------------------
-        myimgui.plWindow(headerFont, strategyInstance.getPortfolio().getTotalProfitLoss());
+        
 
         
         //----------------------------------------------------------------------------

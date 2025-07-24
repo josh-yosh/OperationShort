@@ -10,7 +10,7 @@
 using namespace std::chrono;
 using namespace std;
 
-
+//constructor for backtester object
 Backtester::Backtester(int timeRatioMsToSec, string tickerSymbol, int simulatedYear, int simulatedMonth, int simulatedDay)
     : timeRatioMsToSec(timeRatioMsToSec), tickerSymbol(tickerSymbol), 
     simulatedYear(simulatedYear), simulatedMonth(simulatedMonth), simulatedDay(simulatedDay), simulatedHour(13), simulatedMin(30), 
@@ -20,12 +20,13 @@ Backtester::Backtester(int timeRatioMsToSec, string tickerSymbol, int simulatedY
     startTime = steady_clock::now();
 }
 
+//is used to simulate a single minute
 void Backtester::simulateMinute(string csvName){
     //msToVirtualSecond == value of variable is #ms per virtual simulated second.
 
     
-    if(timeRatioSatifisfied() && !timeEnd){
-        pushToDayInfo(pullMinuteTickerInfo(csvName));
+    if(timeRatioSatifisfied() && !timeEnd){ //time end is a variable to see if we reached the end of the day
+        pushToDayInfo(pullMinuteTickerInfo(csvName));//pushing the pulled minute into backtester variable
         this->incrementSimulatedMinute();
     }
 
@@ -37,30 +38,30 @@ string Backtester::getTickerSymbol(){
 
 //time functions
 
-auto Backtester::getElapsedTime(){ //works
+auto Backtester::getElapsedTime(){ //to see how much time has passed since the last simulated minute
     auto end = steady_clock::now();
     auto start = this->startTime;
     return std::chrono::duration_cast<std::chrono::milliseconds>(end - start);
 }
 
-double Backtester::getDayMaximum(){
+double Backtester::getDayMaximum(){ //day maximum value, starts as first minute close value +2 dollars
     return dayMaximum;
 }
 
-double Backtester::getDayMinimum(){
+double Backtester::getDayMinimum(){ //day minimum value, starts as first minute close value -2 dollars
     return dayMinimum;
 }
 
-int Backtester::getTotalNumOfMinutes(){
+int Backtester::getTotalNumOfMinutes(){ //total minutes passed since the beginning, can be thought of #of step
     return totalNumOfMinutes;
 }
 
-double Backtester::getCurrentPrice(){
+double Backtester::getCurrentPrice(){ //most recenet minute info's close price
     return dayInfo.back().close;
 }
 
-void Backtester::setInitialMinAndMax(minuteTickerInfo tempTickerInfo){
-    dayMinimum = tempTickerInfo.close - 2;
+void Backtester::setInitialMinAndMax(minuteTickerInfo tempTickerInfo){ 
+    dayMinimum = tempTickerInfo.close - 2; //sets the first close as the middle price
     dayMaximum = tempTickerInfo.close + 2;
 }
 
@@ -72,15 +73,15 @@ void Backtester::setDayMaximum(double dayMax){
     dayMaximum = dayMax;
 }
 
-bool Backtester::timeRatioSatifisfied(){ //works
+bool Backtester::timeRatioSatifisfied(){ //if the elapsed time from the last simulated minute is less than the time ratio then it runs
     bool ratioSatisfied = ((getElapsedTime().count() > timeRatioMsToSec));
     if(ratioSatisfied){
-        startTime = steady_clock::now();
+        startTime = steady_clock::now(); //resets clock 
     }
     return ratioSatisfied;
 }
 
-char* Backtester::getFullDate(){
+char* Backtester::getFullDate(){ //returns full day to search for in the database
     char* fullDate = (char*)malloc(sizeof(char) * 26);
     //2025-07-11 13:35:00+00:00
     //year-month-day hour:minute:second+(hours offset of utc):(minutes offset of utc)
@@ -89,7 +90,7 @@ char* Backtester::getFullDate(){
     return fullDate;
 }
 
-char* Backtester::getCurrentTime(){
+char* Backtester::getCurrentTime(){ //returns just the hour and minute time for the y axis and time portions. j
     char* currentTime = (char*)malloc(sizeof(char) * 6);
 
     snprintf(currentTime, 6, "%02d:%02d", simulatedHour, simulatedMin);
@@ -98,23 +99,14 @@ char* Backtester::getCurrentTime(){
 
 //pulling market info functions
 
-void Backtester::pushToDayInfo(minuteTickerInfo minuteInfo){
+void Backtester::pushToDayInfo(minuteTickerInfo minuteInfo){ //pushes the minute info to day info
     dayInfo.push_back(minuteInfo);
-    // cout << "lol\n";
-    if(minuteInfo.close > dayMaximum){
-        dayMaximum = minuteInfo.close;
-        // cout << "hit\n";
-    }
-    if(minuteInfo.close < dayMinimum){
-        dayMinimum = minuteInfo.close;
-        // cout << "double hit\n";
-    }  
 }
 
-void Backtester::incrementSimulatedMinute(){
+void Backtester::incrementSimulatedMinute(){ //for the internal clock
     if(totalNumOfMinutes < int (6.5 * 60))
         totalNumOfMinutes++;
-    if(simulatedHour == 19 && simulatedMin == 59){
+    if(simulatedHour == 19 && simulatedMin == 59){ //finishes at time 19:59
         timeEnd = true;
     }else if(simulatedMin == 59){
         simulatedHour++;
@@ -134,7 +126,7 @@ vector<minuteTickerInfo> Backtester::getDayInfo(){
 
 minuteTickerInfo Backtester::pullMinuteTickerInfo(string csvName){
     // File pointer
-    fstream fin;
+    fstream fin; 
 
     //getting current time 
     string fullDate = this->getFullDate();
@@ -151,25 +143,21 @@ minuteTickerInfo Backtester::pullMinuteTickerInfo(string csvName){
     // Read the Data from the file
     // as String Vector
     vector<string> row;
-    string line, word, temp;
+    string line;
     minuteTickerInfo minuteInfo;
     getline(fin, line); //get first line: Price,Close,High,Low,Open,Volume
     getline(fin, line); // getting passed second line: Ticker,AAPL,AAPL,AAPL,AAPL,AAPL;
 
-    while (getline(fin, line))
+    while (getline(fin, line)) //gets ,,,,, portion of csv
     {
-        
-        
         row.clear();
 
         // used for breaking words
         stringstream ss(line);
 
-        // read every column data of a row and
-        // store it in a string variable, 'word'
         string substr;
 
-        while (getline(ss, substr, ',')){
+        while (getline(ss, substr, ',')){ //seperates by comma's
             
             // add all the column data
             // of a row to a vector
@@ -189,16 +177,12 @@ minuteTickerInfo Backtester::pullMinuteTickerInfo(string csvName){
             minuteInfo.low = stod(row[3]);
             minuteInfo.open = stod(row[4]);
 
-            // cout << "time: " <<  minuteInfo.time << " : \n";
-            // cout << "Close: " << minuteInfo.close << "\n";
-            // cout << "High: " << minuteInfo.high << "\n";
-            // cout << "Low: " << minuteInfo.low << "\n";
-            // cout << "Open: " << minuteInfo.open << "\n";
 
-            if(dayMinimum == 0.0 || dayMaximum == 0.0){
+            //sets initial min and max, changes daymin and max if the highs or lows are lower than the current 
+            //mins and maxes
+            if(dayMinimum == 0.0 || dayMaximum == 0.0){ 
                 setInitialMinAndMax(minuteInfo);
             }
-
             if(minuteInfo.high > dayMaximum){
                 setDayMaximum(dayMaximum);
             }
@@ -212,7 +196,7 @@ minuteTickerInfo Backtester::pullMinuteTickerInfo(string csvName){
 
     }
     if (count == 0)
-        cout << "Record not found\n";
+        cout << "Record not found\n"; 
     fin.close();
 
     return minuteInfo;

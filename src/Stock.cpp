@@ -9,9 +9,9 @@ Stock::Stock(string name): // fix name to be ticker symbold
     name(name), totalVolume(0), priceBasis(0.0), totalProfitLoss(0.0), positions(){}
 
 void Stock::addPosition(int volume, double buyPrice){
-    priceBasis += volume * buyPrice;
-    totalVolume += volume;
-    positions.push_back(position(volume, buyPrice));
+    priceBasis += volume * buyPrice; //finds the money used to buy the stock
+    totalVolume += volume; //alters the total volume
+    positions.push_back(position(volume, buyPrice)); //adds the position
 }
 
 double Stock::sellPosition(int volume, double sellPrice){ // volume cannot be larger than how much we have
@@ -21,6 +21,8 @@ double Stock::sellPosition(int volume, double sellPrice){ // volume cannot be la
     double cashFromSell = volume * sellPrice; // total amount of money the stock is worth
     double costBasisOfSoldShares;
     
+    //we go from the top of the stack and pop until we run out of volume needed to sell, or in other words
+    //until our order is fufilled
     while(mostRecentBuyVolumeLessThanOrEqualSellVolume){
         volume -= mostRecentBuyVolume;
         totalVolume -= mostRecentBuyVolume;
