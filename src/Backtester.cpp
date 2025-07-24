@@ -199,10 +199,10 @@ minuteTickerInfo Backtester::pullMinuteTickerInfo(string csvName){
                 setInitialMinAndMax(minuteInfo);
             }
 
-            if(minuteInfo.high < dayMaximum){
+            if(minuteInfo.high > dayMaximum){
                 setDayMaximum(dayMaximum);
             }
-            if(minuteInfo.low > dayMinimum){
+            if(minuteInfo.low < dayMinimum){
                 setDayMinimum(dayMinimum);
             }
 

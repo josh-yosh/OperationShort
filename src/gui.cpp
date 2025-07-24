@@ -82,8 +82,11 @@ int main() {
 
     //backtester instance---------------------------------------------------------
     //ms ratio, symbol, year, month, day
-    Backtester backtesterInstance(10, "APPL", 2025, 7, 22);
+    Backtester backtesterInstance(100, "APPL", 2025, 7, 22);
     Strategy strategyInstance;
+    backtesterInstance.pushToDayInfo(backtesterInstance.pullMinuteTickerInfo("APPL"));
+    backtesterInstance.incrementSimulatedMinute();
+
     strategyInstance.setOrderVolume(4);
 
     //while loop ---------------------------------------------------------
