@@ -340,7 +340,7 @@ void UseImGui::scoreScreen(ImFont* headerFont, Strategy strategyInstance, Backte
         colorForProfitAndLoss = ImVec4(1.0f, 0.0f, 0.0f, 1.0f); //red
     }
 
-    ImGui::SetNextWindowSizeConstraints(ImVec2(630, 220), ImVec2(630, 220));   //changes window size constraing
+    ImGui::SetNextWindowSizeConstraints(ImVec2(620, 220), ImVec2(620, 220));   //changes window size constraing
         ImGui::SetNextWindowPos(ImVec2(500, 150), ImGuiCond_Once);
         ImGui::Begin("Final Score", nullptr, ImGuiWindowFlags_NoTitleBar | ImGuiWindowFlags_NoScrollbar); //make in middle
         
@@ -351,7 +351,7 @@ void UseImGui::scoreScreen(ImFont* headerFont, Strategy strategyInstance, Backte
 
 
         ImGui::PushStyleColor(ImGuiCol_Border, ImVec4(1.0f, 1.0f, 1.0f, 1.0f));
-        ImGui::BeginChild("Result Screen", ImVec2(600, 140), true, ImGuiChildFlags_Borders | ImGuiWindowFlags_NoScrollbar);
+        ImGui::BeginChild("Result Screen", ImVec2(605, 140), true, ImGuiChildFlags_Borders | ImGuiWindowFlags_NoScrollbar);
 
 
         ImGui::PushStyleColor(ImGuiCol_Text, colorForPercent);
