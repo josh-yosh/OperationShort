@@ -78,9 +78,12 @@ int main() {
     io.Fonts->Build();
 
     //backtester instance---------------------------------------------------------
+
+    int testCash = 1000;
     //ms ratio, symbol, year, month, day
     Backtester backtesterInstance(10, "APPL", 2025, 7, 22);
-    Strategy strategyInstance(1000);
+    Strategy strategyInstance(testCash);
+    
 
     //inital minute value
     backtesterInstance.pushToDayInfo(backtesterInstance.pullMinuteTickerInfo("APPL"));
@@ -125,7 +128,10 @@ int main() {
         //----------------------------------------------------------------------------
         
         if(backtesterInstance.getIsEnd()){
-            myimgui.scoreScreen(headerFont, strategyInstance);
+            if(backtesterInstance.getLargestPossibleProfit() == 0) //if it hasn't been calculated yet then calculate
+                backtesterInstance.calculateLargestPossibleProfit(testCash);
+            
+            myimgui.scoreScreen(headerFont, strategyInstance, backtesterInstance);
         }
         
         //----------------------------------------------------------------------------

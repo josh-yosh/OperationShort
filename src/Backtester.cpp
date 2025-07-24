@@ -15,7 +15,8 @@ Backtester::Backtester(int timeRatioMsToSec, string tickerSymbol, int simulatedY
     : timeRatioMsToSec(timeRatioMsToSec), tickerSymbol(tickerSymbol), 
     simulatedYear(simulatedYear), simulatedMonth(simulatedMonth), simulatedDay(simulatedDay), simulatedHour(13), simulatedMin(30), 
     timeEnd(false), totalNumOfMinutes(0), dayMinimum(0.0), dayMaximum(0.0), 
-    stockPrice(0.0), position(), dayInfo()
+    stockPrice(0.0), position(), dayInfo(),
+    largestPossibleProfit(0.0)
 { //need to add algorithm in later as parameter
     startTime = steady_clock::now();
 }
@@ -208,3 +209,50 @@ minuteTickerInfo Backtester::pullMinuteTickerInfo(string csvName){
 
 
 
+
+void Backtester::calculateLargestPossibleProfit(double testCash){
+    double dip;
+    double peak;
+    bool climbing;
+    int volume = testCash/dayInfo[0].close;
+    double cashMade = 0;
+
+    //initial set up
+    if(dayInfo[1].high > dayInfo[0].high){
+        dip = dayInfo[0].low;
+        peak = dayInfo[1].high;
+        climbing = true;
+        volume = testCash/dayInfo[0].close;
+    } else {
+        peak = dayInfo[0].high;
+        dip = dayInfo[1].low;
+        climbing = false;
+        cashMade = testCash;
+    }
+
+    for(int indexMinute = 1; indexMinute < dayInfo.size() - 1; indexMinute++){
+        if(dayInfo[indexMinute + 1].high > dayInfo[indexMinute].high){
+            peak = dayInfo[indexMinute + 1].high;
+            
+            if(!climbing){
+                dip = dayInfo[indexMinute].low;
+                climbing = true;
+                volume = cashMade/dayInfo[indexMinute].low;
+                cashMade -= volume*dayInfo[indexMinute].high;
+            }
+
+        } else {
+
+            if(climbing){
+                largestPossibleProfit += (peak - dip) * volume;
+                peak = dayInfo[indexMinute].high;
+                climbing = false;
+                cashMade += volume * dayInfo[indexMinute].high;
+            }
+        }
+    }
+}
+
+double Backtester::getLargestPossibleProfit(){
+    return largestPossibleProfit;
+}

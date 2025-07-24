@@ -59,6 +59,9 @@ class Backtester //keep in mind market opens 9:30am EST and closes 4pm EST
         void incrementSimulatedMinute();
         minuteTickerInfo sendRecentMinuteTickerInfo();
 
+        void calculateLargestPossibleProfit(double testCash);
+        double getLargestPossibleProfit();
+
     private:
         int simulatedYear;
         int simulatedMonth;
@@ -74,6 +77,7 @@ class Backtester //keep in mind market opens 9:30am EST and closes 4pm EST
         int timeRatioMsToSec; 
         double stockPrice;
         bool timeEnd;
+        double largestPossibleProfit;
 
         Position position; 
         string tickerSymbol;

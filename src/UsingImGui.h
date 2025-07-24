@@ -41,7 +41,7 @@ public:
     void drawCurrentPrice(int xPositionOfCandle ,int yCandleTop, Backtester backtesterInstance, ImFont* timeText);
     void makeOrderMark(orderMark orderMarkElement, double dayMin, ImDrawList *draw_list);
     void handleOrder(OrderType orderType, int totalNumOfMinutes, double currentPrice, string stockSymbol, string stringTimeOfOrder, int orderVolume);
-    void scoreScreen(ImFont* headerFont, Strategy strategyInstance);
+    void scoreScreen(ImFont* headerFont, Strategy strategyInstance, Backtester backtesterInstance);
 
 
 private:

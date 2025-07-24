@@ -318,9 +318,10 @@ void UseImGui::handleOrder(OrderType orderType, int totalNumOfMinutes, double cu
     }
 }
 
-void UseImGui::scoreScreen(ImFont* headerFont, Strategy strategyInstance){
+void UseImGui::scoreScreen(ImFont* headerFont, Strategy strategyInstance, Backtester backtesterInstance){
     double percentReturn = (strategyInstance.getPortfolio().getTotalProfitLoss()/strategyInstance.getStartingCash()) * 100;
     double profitLoss = strategyInstance.getPortfolio().getTotalProfitLoss();
+    double totalPossibleProfit = backtesterInstance.getLargestPossibleProfit();
 
     ImVec4 colorForPercent;
     ImVec4 colorForProfitAndLoss;
@@ -339,7 +340,7 @@ void UseImGui::scoreScreen(ImFont* headerFont, Strategy strategyInstance){
         colorForProfitAndLoss = ImVec4(1.0f, 0.0f, 0.0f, 1.0f); //red
     }
 
-    ImGui::SetNextWindowSizeConstraints(ImVec2(520, 180), ImVec2(520, 180));   //changes window size constraing
+    ImGui::SetNextWindowSizeConstraints(ImVec2(630, 220), ImVec2(630, 220));   //changes window size constraing
         ImGui::SetNextWindowPos(ImVec2(500, 150), ImGuiCond_Once);
         ImGui::Begin("Final Score", nullptr, ImGuiWindowFlags_NoTitleBar | ImGuiWindowFlags_NoScrollbar); //make in middle
         
@@ -350,7 +351,7 @@ void UseImGui::scoreScreen(ImFont* headerFont, Strategy strategyInstance){
 
 
         ImGui::PushStyleColor(ImGuiCol_Border, ImVec4(1.0f, 1.0f, 1.0f, 1.0f));
-        ImGui::BeginChild("Result Screen", ImVec2(505, 100), true, ImGuiChildFlags_Borders | ImGuiWindowFlags_NoScrollbar);
+        ImGui::BeginChild("Result Screen", ImVec2(600, 140), true, ImGuiChildFlags_Borders | ImGuiWindowFlags_NoScrollbar);
 
 
         ImGui::PushStyleColor(ImGuiCol_Text, colorForPercent);
@@ -360,8 +361,14 @@ void UseImGui::scoreScreen(ImFont* headerFont, Strategy strategyInstance){
 
         ImGui::PushStyleColor(ImGuiCol_Text, colorForProfitAndLoss);
         ImGui::SetCursorPos(ImVec2(10, 50));
-        ImGui::Text("Dollar Return: $%f", profitLoss);
+        ImGui::Text("Dollar Return: $%02.2f", profitLoss);
         ImGui::PopStyleColor();
+
+        ImGui::PushStyleColor(ImGuiCol_Text, colorForProfitAndLoss);
+        ImGui::SetCursorPos(ImVec2(10, 90));
+        ImGui::Text("Total Possible Profit: $%02.2f", totalPossibleProfit);
+        ImGui::PopStyleColor();
+
         ImGui::PopFont();
 
         ImGui::PopStyleColor();
