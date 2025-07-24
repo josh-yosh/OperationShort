@@ -174,17 +174,20 @@ void UseImGui::makeGraph(Backtester backtesterInstance, ImFont* timeText){
 
 
     //for the little indents 
+
+    double dayMaxAndMinDifference = (backtesterInstance.getDayMaximum() - backtesterInstance.getDayMinimum());
+
+    numTicker = backtesterInstance.getTotalNumOfMinutes();
+    heightPixelPerDollar = (heightOfGraph/(backtesterInstance.getDayMaximum() - backtesterInstance.getDayMinimum()));
+
     
+    yNumOfIndents = int (dayMaxAndMinDifference);
+
     int widthBetweenIndents = (xPosOfXaxisEnd-xPosOfYaxis)/xNumOfIndents;
     int xPosOfIndent = xPosOfYaxis;
 
-    int heightBetweenIndents = (yPosOfXaxis-yPosOfYaxisEnd)/yNumOfIndents;
+    int heightBetweenIndents = ((yPosOfXaxis-yPosOfYaxisEnd)/dayMaxAndMinDifference);
     int yPosOfIndent = yPosOfXaxis;
-
-    numTicker = backtesterInstance.getTotalNumOfMinutes();
-    heightPixelPerDollar = heightOfGraph/(backtesterInstance.getDayMaximum() - backtesterInstance.getDayMinimum());
-
-    yNumOfIndents = int (backtesterInstance.getDayMaximum() - backtesterInstance.getDayMinimum());
 
     // ImVec2 topOfIndent()
 
@@ -252,7 +255,7 @@ void UseImGui::makeGraph(Backtester backtesterInstance, ImFont* timeText){
     }
 }
 
-void UseImGui::plotPoint(double high, double low, int minuteInfoIndex, int dayMax, int dayMin, ImDrawList *draw_list, Backtester backtesterInstance){
+void UseImGui::plotPoint(double high, double low, int minuteInfoIndex, double dayMax, double dayMin, ImDrawList *draw_list, Backtester backtesterInstance){
     ImVec4 white(1.0f, 1.0f, 1.0f, 1.0f);
     int xPositionOfCandle = xPosOfYaxis + (widthPixelsPerMinute * minuteInfoIndex);
     int yCandleTop = yPosOfXaxis - (heightPixelPerDollar * (high - dayMin));
@@ -271,7 +274,7 @@ void UseImGui::plotPoint(double high, double low, int minuteInfoIndex, int dayMa
     draw_list->AddLine(topCandle, bottomCandle, ImColor(white), 2.0f);
 }
 
-void UseImGui::makeOrderMark(orderMark orderMarkElement, int dayMin, ImDrawList *draw_list){
+void UseImGui::makeOrderMark(orderMark orderMarkElement, double dayMin, ImDrawList *draw_list){
     ImVec4 color;
     centerScreen = ImGui::GetCursorScreenPos();
 

@@ -37,9 +37,9 @@ public:
     void logWindow(ImFont* defaultFont, ImFont* headerFont, ImFont* logText, vector<minuteTickerInfo> tempDayInfo);
     void plWindow(ImFont* headerFont, double currentProfitLoss);
     void makeGraph(Backtester backtesterInstance, ImFont* timeText);
-    void plotPoint(double high, double low, int numTicker, int dayMax, int dayMin, ImDrawList *draw_list, Backtester backtesterInstance);
+    void plotPoint(double high, double low, int numTicker, double dayMax, double dayMin, ImDrawList *draw_list, Backtester backtesterInstance);
     void drawCurrentPrice(int xPositionOfCandle ,int yCandleTop, Backtester backtesterInstance, ImFont* timeText);
-    void makeOrderMark(orderMark orderMarkElement, int dayMin, ImDrawList *draw_list);
+    void makeOrderMark(orderMark orderMarkElement, double dayMin, ImDrawList *draw_list);
     void handleOrder(OrderType orderType, int totalNumOfMinutes, double currentPrice, string stockSymbol, string stringTimeOfOrder, int orderVolume);
     
 
