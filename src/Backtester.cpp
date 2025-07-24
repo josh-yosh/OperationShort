@@ -64,6 +64,14 @@ void Backtester::setInitialMinAndMax(minuteTickerInfo tempTickerInfo){
     dayMaximum = tempTickerInfo.close + 2;
 }
 
+void Backtester::setDayMinimum(double dayMin){
+    dayMinimum = dayMin;
+}
+
+void Backtester::setDayMaximum(double dayMax){
+    dayMaximum = dayMax;
+}
+
 bool Backtester::timeRatioSatifisfied(){ //works
     bool ratioSatisfied = ((getElapsedTime().count() > timeRatioMsToSec));
     if(ratioSatisfied){
@@ -189,6 +197,13 @@ minuteTickerInfo Backtester::pullMinuteTickerInfo(string csvName){
 
             if(dayMinimum == 0.0 || dayMaximum == 0.0){
                 setInitialMinAndMax(minuteInfo);
+            }
+
+            if(minuteInfo.high < dayMaximum){
+                setDayMaximum(dayMaximum);
+            }
+            if(minuteInfo.low > dayMinimum){
+                setDayMinimum(dayMinimum);
             }
 
             break;

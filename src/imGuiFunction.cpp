@@ -2,6 +2,7 @@
 #include <iostream>
 #include "Strategy.hpp"
 
+bool UseImGui::scrollToBottom = false;
 
 void UseImGui::Init(GLFWwindow* window, const char* glsl_version){
     IMGUI_CHECKVERSION();
@@ -78,10 +79,11 @@ void UseImGui::logWindow(ImFont* defaultFont, ImFont* headerFont, ImFont* logTex
         ImGui::Text("SYMBOL: APPL");
         ImGui::PopFont();
         
+        
 
         ImGui::PushStyleColor(ImGuiCol_ChildBg, ImVec4(0.1f, 0.1f, 0.1f, 1.0f));
         ImGui::PushStyleColor(ImGuiCol_Border, ImVec4(1.0f, 1.0f, 1.0f, 1.0f));
-        ImGui::BeginChild("Scrolling", ImVec2(300, 725), ImGuiChildFlags_Borders);
+        ImGui::BeginChild("Scrolling", ImVec2(300, 725), ImGuiChildFlags_Borders || ImGuiWindowFlags_AlwaysVerticalScrollbar);
 
         ImGui::PopFont();
         ImGui::PushFont(logText);
@@ -100,6 +102,11 @@ void UseImGui::logWindow(ImFont* defaultFont, ImFont* headerFont, ImFont* logTex
             ImGui::PushStyleColor(ImGuiCol_Text, color);
             ImGui::Text( "%s - %d Shares %s @ %05f", allOrderMarks[i].stringTimeOfOrder.c_str(), allOrderMarks[i].volume, allOrderMarks[i].stockSymbol.c_str(), allOrderMarks[i].priceOfOrder);
             ImGui::PopStyleColor();
+        }
+
+        if (scrollToBottom){
+            ImGui::SetScrollHereY(1.0f);
+            scrollToBottom = false;
         }
 
         ImGui::PopFont();
@@ -240,7 +247,9 @@ void UseImGui::makeGraph(Backtester backtesterInstance, ImFont* timeText){
         makeOrderMark(allOrderMarks[markIndex], dayMin, draw_list);
     }
 
-    drawCurrentPrice(xPositionOfCurrentPrice, yPositionOfCurrentPrice, backtesterInstance, timeText);
+    if(backtesterInstance.getDayInfo().size() > 0){
+        drawCurrentPrice(xPositionOfCurrentPrice, yPositionOfCurrentPrice, backtesterInstance, timeText);
+    }
 }
 
 void UseImGui::plotPoint(double high, double low, int minuteInfoIndex, int dayMax, int dayMin, ImDrawList *draw_list, Backtester backtesterInstance){
@@ -300,9 +309,11 @@ void UseImGui::handleOrder(OrderType orderType, int totalNumOfMinutes, double cu
     switch (orderType) {
         case OrderType::MARKETBUY:
             allOrderMarks.push_back(orderMark(totalNumOfMinutes, currentPrice, true, stockSymbol, stringTimeOfOrder, orderVolume));
+            scrollToBottom = true;
             break;
         case OrderType::MARKETSELL:
             allOrderMarks.push_back(orderMark(totalNumOfMinutes, currentPrice, false, stockSymbol, stringTimeOfOrder, orderVolume));
+            scrollToBottom = true;
             break;
         case OrderType::LIMITBUY:
             break;

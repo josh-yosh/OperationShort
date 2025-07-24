@@ -58,6 +58,8 @@ private:
     int numTicker;
     int xPositionOfCurrentPrice;
     int yPositionOfCurrentPrice;
+    static bool scrollToBottom;
+
     ImVec2 centerScreen;
     ImVec4 white;
     

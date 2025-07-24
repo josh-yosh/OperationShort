@@ -82,7 +82,7 @@ int main() {
 
     //backtester instance---------------------------------------------------------
     //ms ratio, symbol, year, month, day
-    Backtester backtesterInstance(10, "APPL", 2025, 7, 11);
+    Backtester backtesterInstance(10, "APPL", 2025, 7, 22);
     Strategy strategyInstance;
     strategyInstance.setOrderVolume(4);
 

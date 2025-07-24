@@ -50,6 +50,9 @@ class Backtester //keep in mind market opens 9:30am EST and closes 4pm EST
 
         void setInitialMinAndMax(minuteTickerInfo tempTickerInfo);
 
+        void setDayMinimum(double dayMin);
+        void setDayMaximum(double dayMax);
+
         bool timeRatioSatifisfied();
 
         void incrementSimulatedMinute();
