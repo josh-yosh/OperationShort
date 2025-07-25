@@ -292,32 +292,58 @@ double Backtester::getLargestPossibleProfit(){
     return largestPossibleProfit;
 }
 
-void Backtester::createDayInfoCSV(string tickerSymbol, int day, int month, int year){
+void Backtester::createDayInfoCSV(string tickerSymbol, int year, int month, int day){
     Py_Initialize();
 
-    PyRun_SimpleString("print('Hello from Python!')");
+    PyRun_SimpleString("import sys, os; sys.path.append(os.getcwd() + '/src')");
 
-    // Example: call a function from a Python file
-    PyObject *pName = PyUnicode_FromString("your_script");
-    PyObject *pModule = PyImport_Import(pName);
+    PyObject* pName = PyUnicode_FromString("datagrabber");
+    PyObject* pModule = PyImport_Import(pName);
     Py_DECREF(pName);
 
-    if (pModule != nullptr) {
-        PyObject *pFunc = PyObject_GetAttrString(pModule, "your_function");
-        if (PyCallable_Check(pFunc)) {
-            PyObject *pValue = PyObject_CallObject(pFunc, nullptr);
-            // You can now extract data from pValue if needed
-            Py_DECREF(pValue);
+    if (pModule) {
+        PyObject* creatingCSV = PyObject_GetAttrString(pModule, "pullCSVData");
+
+        if (creatingCSV && PyCallable_Check(creatingCSV)) {
+            PyObject* pTickerSymbol = PyUnicode_FromString(tickerSymbol.c_str());
+
+            std::stringstream date;
+            date << year << "-" << std::setw(2) << std::setfill('0') << month << "-"
+                 << std::setw(2) << std::setfill('0') << day;
+            std::string dateString = date.str();
+            PyObject* pDateString = PyUnicode_FromString(dateString.c_str());
+
+            const char* pTimeInterval = "1m";
+            const char* timePeriod = "1d";
+
+            PyObject* pTimes = PyLong_FromLong(3);  // Not used but kept for future?
+            PyObject* pArgs = PyTuple_Pack(4, pTickerSymbol, pDateString, 
+                                           PyUnicode_FromString(pTimeInterval), 
+                                           PyUnicode_FromString(timePeriod));
+
+            PyObject* csv = PyObject_CallObject(creatingCSV, pArgs);
+
+            // Clean up
+            Py_DECREF(pArgs);
+            Py_DECREF(pTickerSymbol);
+            Py_DECREF(pDateString);
+            Py_DECREF(pTimes);
+            if (csv) Py_DECREF(csv);
+            else PyErr_Print();
+
+            Py_DECREF(creatingCSV);
+        } else {
+            PyErr_Print();
         }
-        Py_XDECREF(pFunc);
+
         Py_DECREF(pModule);
     } else {
         PyErr_Print();
     }
 
     Py_Finalize();
-
 }
+
 
 int Backtester::getSimulatedHour(){
     return simulatedHour;

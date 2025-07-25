@@ -6,6 +6,7 @@ CMakeFiles/
 CMakeCache.txt
 Makefile
 cmake_install.cmake
+src/__pycache__
 
 # OS-specific files
 .DS_Store

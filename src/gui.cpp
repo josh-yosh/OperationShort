@@ -84,6 +84,8 @@ int main() {
     Backtester backtesterInstance(20, "AAPL", 2025, 7, 21, 24); //includes last day
     Strategy strategyInstance(testCash);
     
+    //creating csvs
+    backtesterInstance.createDayInfoCSV("AAPL", 2025, 7, 21);
 
     //inital minute value
     backtesterInstance.pushToDayInfo(backtesterInstance.pullMinuteTickerInfo());

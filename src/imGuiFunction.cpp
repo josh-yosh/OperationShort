@@ -376,7 +376,7 @@ void UseImGui::scoreScreen(ImFont* headerFont, Strategy strategyInstance, Backte
         ImGui::Text("Total Possible Profit: $%02.2f", totalPossibleProfit);
 
         ImGui::SetCursorPos(ImVec2(10, 130));
-        ImGui::Text("%% of Possible Profit: %%%.4f", (profitLoss/totalPossibleProfit) * 100);
+        ImGui::Text("%% of Possible Profit: %%%02.2f", (profitLoss/totalPossibleProfit) * 100);
 
 
         ImGui::PopStyleColor();
