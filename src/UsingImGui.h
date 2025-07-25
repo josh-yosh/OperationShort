@@ -63,7 +63,8 @@ private:
     ImVec2 centerScreen;
     ImVec4 white;
     
-    vector<orderMark> allOrderMarks;
+    vector<orderMark> allOrderMarks; //for logs
+    vector<orderMark> dayOrderMarks; //for visual
     ImGuiIO &io;
 
     static ImFont* defaultFont;

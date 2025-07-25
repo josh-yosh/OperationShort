@@ -6,28 +6,31 @@
 #include <iostream>
 #include <sstream>
 #include <string>
+#include <cstdlib>
+#include <Python.h>
+#include <iomanip>
+
 
 using namespace std::chrono;
 using namespace std;
 
 //constructor for backtester object
-Backtester::Backtester(int timeRatioMsToSec, string tickerSymbol, int simulatedYear, int simulatedMonth, int simulatedDay)
+Backtester::Backtester(int timeRatioMsToSec, string tickerSymbol, int simulatedYear, int simulatedMonth, int simulatedDay, int endDay)
     : timeRatioMsToSec(timeRatioMsToSec), tickerSymbol(tickerSymbol), 
-    simulatedYear(simulatedYear), simulatedMonth(simulatedMonth), simulatedDay(simulatedDay), simulatedHour(13), simulatedMin(30), 
+    simulatedYear(simulatedYear), simulatedMonth(simulatedMonth), simulatedDay(simulatedDay), simulatedHour(13), simulatedMin(30), endDay(endDay),
     timeEnd(false), totalNumOfMinutes(0), dayMinimum(0.0), dayMaximum(0.0), 
-    stockPrice(0.0), position(), dayInfo(),
+    stockPrice(0.0), position(), dayInfo(), 
     largestPossibleProfit(0.0)
 { //need to add algorithm in later as parameter
     startTime = steady_clock::now();
 }
 
 //is used to simulate a single minute
-void Backtester::simulateMinute(string csvName){
+void Backtester::simulateMinute(){
     //msToVirtualSecond == value of variable is #ms per virtual simulated second.
 
-    
     if(timeRatioSatifisfied() && !timeEnd){ //time end is a variable to see if we reached the end of the day
-        pushToDayInfo(pullMinuteTickerInfo(csvName));//pushing the pulled minute into backtester variable
+        pushToDayInfo(pullMinuteTickerInfo());//pushing the pulled minute into backtester variable
         this->incrementSimulatedMinute();
     }
 
@@ -108,16 +111,30 @@ void Backtester::pushToDayInfo(minuteTickerInfo minuteInfo){ //pushes the minute
     dayInfo.push_back(minuteInfo);
 }
 
+//DOESN'T WORK WITH DAYS THAT GO INBETWEEN MONTHS
 void Backtester::incrementSimulatedMinute(){ //for the internal clock
     if(totalNumOfMinutes < int (6.5 * 60))
         totalNumOfMinutes++;
     if(simulatedHour == 19 && simulatedMin == 59){ //finishes at time 19:59
-        timeEnd = true;
-    }else if(simulatedMin == 59){
+
+        simulatedDay++;
+        if(simulatedDay == endDay + 1){ //if last day, timeEnd
+            timeEnd = true;
+        } else {
+            simulatedHour = 13;
+            simulatedMin = 30;
+            dayInfo.clear();
+            totalNumOfMinutes = 0;
+
+            //first value
+            pushToDayInfo(pullMinuteTickerInfo());//pushing the pulled minute into backtester variable
+            this->incrementSimulatedMinute();
+        }
+    }else if(simulatedMin == 59){ //not end of the day but end of hour
         simulatedHour++;
         simulatedMin = 0;
     } else {
-        simulatedMin++;
+        simulatedMin++; //not end of day or hour
     }
 }
 
@@ -129,7 +146,7 @@ vector<minuteTickerInfo> Backtester::getDayInfo(){
     return dayInfo;
 }
 
-minuteTickerInfo Backtester::pullMinuteTickerInfo(string csvName){
+minuteTickerInfo Backtester::pullMinuteTickerInfo(){
     // File pointer
     fstream fin; 
 
@@ -137,7 +154,15 @@ minuteTickerInfo Backtester::pullMinuteTickerInfo(string csvName){
     string fullDate = this->getFullDate();
 
     // Open an existing file
-    fin.open("src/tickerData/AAPL_data.csv", ios::in);
+    std::stringstream file;
+    file << "src/tickerData/" << tickerSymbol << "_"
+        << simulatedYear << "-"
+        << std::setw(2) << std::setfill('0') << simulatedMonth << "-"
+        << std::setw(2) << std::setfill('0') << simulatedDay << "_data.csv";
+    
+    
+    std::string fileName = file.str();
+    fin.open(fileName, ios::in);
 
 
     // Get the roll number
@@ -189,10 +214,10 @@ minuteTickerInfo Backtester::pullMinuteTickerInfo(string csvName){
                 setInitialMinAndMax(minuteInfo);
             }
             if(minuteInfo.high > dayMaximum){
-                setDayMaximum(dayMaximum);
+                setDayMaximum(minuteInfo.high);
             }
             if(minuteInfo.low < dayMinimum){
-                setDayMinimum(dayMinimum);
+                setDayMinimum(minuteInfo.low);
             }
 
             break;
@@ -200,8 +225,13 @@ minuteTickerInfo Backtester::pullMinuteTickerInfo(string csvName){
 
 
     }
-    if (count == 0)
-        cout << "Record not found\n"; 
+    if (count == 0 && dayInfo.size()){
+        minuteInfo.close = dayInfo.back().close;
+        minuteInfo.high = dayInfo.back().high;
+        minuteInfo.low = dayInfo.back().low;
+        minuteInfo.open = dayInfo.back().open;
+    }
+        
     fin.close();
 
     return minuteInfo;
@@ -251,8 +281,47 @@ void Backtester::calculateLargestPossibleProfit(double testCash){
             }
         }
     }
+
+    if(climbing){
+        cashMade += volume * dayInfo[dayInfo.size()].high;
+    }
+
 }
 
 double Backtester::getLargestPossibleProfit(){
     return largestPossibleProfit;
+}
+
+void Backtester::createDayInfoCSV(string tickerSymbol, int day, int month, int year){
+    Py_Initialize();
+
+    PyRun_SimpleString("print('Hello from Python!')");
+
+    // Example: call a function from a Python file
+    PyObject *pName = PyUnicode_FromString("your_script");
+    PyObject *pModule = PyImport_Import(pName);
+    Py_DECREF(pName);
+
+    if (pModule != nullptr) {
+        PyObject *pFunc = PyObject_GetAttrString(pModule, "your_function");
+        if (PyCallable_Check(pFunc)) {
+            PyObject *pValue = PyObject_CallObject(pFunc, nullptr);
+            // You can now extract data from pValue if needed
+            Py_DECREF(pValue);
+        }
+        Py_XDECREF(pFunc);
+        Py_DECREF(pModule);
+    } else {
+        PyErr_Print();
+    }
+
+    Py_Finalize();
+
+}
+
+int Backtester::getSimulatedHour(){
+    return simulatedHour;
+}
+int Backtester::getSimulatedMin(){
+    return simulatedMin;
 }

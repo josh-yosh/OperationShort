@@ -80,13 +80,13 @@ int main() {
     //backtester instance---------------------------------------------------------
 
     int testCash = 1000;
-    //ms ratio, symbol, year, month, day
-    Backtester backtesterInstance(10, "APPL", 2025, 7, 22);
+    //ms ratio, symbol, year, month, day, end Day
+    Backtester backtesterInstance(20, "AAPL", 2025, 7, 21, 24); //includes last day
     Strategy strategyInstance(testCash);
     
 
     //inital minute value
-    backtesterInstance.pushToDayInfo(backtesterInstance.pullMinuteTickerInfo("APPL"));
+    backtesterInstance.pushToDayInfo(backtesterInstance.pullMinuteTickerInfo());
     backtesterInstance.incrementSimulatedMinute();
 
     strategyInstance.setOrderVolume(4);
@@ -102,9 +102,10 @@ int main() {
         ImGui::LoadIniSettingsFromDisk("../my_ui_layout.ini");        
         //----------------------------------------------------------------------------
 
-        backtesterInstance.simulateMinute("APPL");
+        backtesterInstance.simulateMinute();
         vector<minuteTickerInfo> tempDayInfo = backtesterInstance.getDayInfo();
 
+       
         //uses the strategy 
         OrderType order = strategyInstance.waveRiding("APPL", backtesterInstance.getCurrentPrice(), backtesterInstance.getDayInfo());
         myimgui.handleOrder(order, backtesterInstance.getTotalNumOfMinutes(), backtesterInstance.getCurrentPrice(), backtesterInstance.getTickerSymbol(),  backtesterInstance.getCurrentTime(), strategyInstance.getOrderVolume());

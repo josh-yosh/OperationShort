@@ -31,12 +31,12 @@ class Backtester //keep in mind market opens 9:30am EST and closes 4pm EST
     
 
     public: 
-        Backtester(int timeRatioMsToSec, string tickerSymbol, int year, int month, int day); //will hold all the information such as starting time upon initialization
+        Backtester(int timeRatioMsToSec, string tickerSymbol, int year, int month, int day, int endDay); //will hold all the information such as starting time upon initialization
 
-        void simulateMinute(string csvName); //if ratio has passed then add information to portfolio
+        void simulateMinute(); //if ratio has passed then add information to portfolio
         void pushToDayInfo(minuteTickerInfo minuteInfo); //pushed information to the vector which will be what the graph is made of
 
-        minuteTickerInfo pullMinuteTickerInfo(string csvName);
+        minuteTickerInfo pullMinuteTickerInfo();
         
         vector<minuteTickerInfo> getDayInfo();
         double getDayMinimum();
@@ -62,12 +62,19 @@ class Backtester //keep in mind market opens 9:30am EST and closes 4pm EST
         void calculateLargestPossibleProfit(double testCash);
         double getLargestPossibleProfit();
 
+        void createDayInfoCSV(string tickerSymbol, int day, int month, int year);
+
+        int getSimulatedHour();
+        int getSimulatedMin();
+
     private:
         int simulatedYear;
         int simulatedMonth;
         int simulatedDay;
         int simulatedHour; 
-        int simulatedMin; 
+        int simulatedMin;
+        
+        int endDay;
 
         int totalNumOfMinutes;
 
@@ -83,6 +90,5 @@ class Backtester //keep in mind market opens 9:30am EST and closes 4pm EST
         string tickerSymbol;
         vector<minuteTickerInfo> dayInfo;
         std::chrono::steady_clock::time_point startTime;
-
 }; 
 
