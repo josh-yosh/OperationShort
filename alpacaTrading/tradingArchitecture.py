@@ -3,12 +3,25 @@ from alpaca.trading.requests import GetAssetsRequest
 from alpaca.trading.enums import AssetClass
 from alpaca.trading.requests import MarketOrderRequest, LimitOrderRequest
 from alpaca.trading.enums import OrderSide, TimeInForce
+from alpaca.data.live import StockDataStream
 import requests
 
 
 #please do not commit my api keys
 # trading_client = TradingClient('api-key', 'secret-key', paper=True)
 trading_client = TradingClient('', '', paper=True)
+stock_stream = StockDataStream("", "")
+
+async def startDataStream():
+    # async handler
+    async def quote_data_handler(data):
+        # quote data will arrive here
+        print(data)
+
+    stock_stream.subscribe_quotes(quote_data_handler, "SPY")
+
+    stock_stream.run()
+
 
 def getBuyingPower():
     # Get our account information.
@@ -19,7 +32,7 @@ def getBuyingPower():
         print('Account is currently restricted from trading.')
 
     # Check how much money we can use to open new positions.
-    print('${} is available as buying power.'.format(account.buying_power))
+    return account.buying_power
 
 
 def getProfitLoss():
@@ -28,7 +41,8 @@ def getProfitLoss():
 
     # Check our current balance vs. our balance at the last market close
     balance_change = float(account.equity) - float(account.last_equity)
-    print(f'Today\'s portfolio balance change: ${balance_change}')
+
+    return balance_change
 
 
 def getAllAssets():
@@ -36,6 +50,7 @@ def getAllAssets():
     search_params = GetAssetsRequest(asset_class=AssetClass.US_EQUITY)
 
     assets = trading_client.get_all_assets(search_params)
+    return assets
 
 
 def isSymbolTradable():
@@ -44,8 +59,10 @@ def isSymbolTradable():
 
     if aapl_asset.tradable:
         print('We can trade AAPL.')
+        return True
     else:
         print('We cannot trade AAPL.')
+        return False
 
 
 def makeMarketOrder(stockSymbol, volume, orderSide, timeInForce):
@@ -59,11 +76,15 @@ def makeMarketOrder(stockSymbol, volume, orderSide, timeInForce):
     return market_order_data
 
 
+#can be used for limit orders too
 def sumbitMarketOrder(market_order_data):
     # Market order
     market_order = trading_client.submit_order(
                     order_data=market_order_data
                 )
+    print("Market Order sent")
+
+
 def makeLimitOrder(stockSymbol, limitPrice, volume, orderSide, timeInForce):
     # preparing limit order 
     limit_order_data = LimitOrderRequest(
@@ -73,11 +94,7 @@ def makeLimitOrder(stockSymbol, limitPrice, volume, orderSide, timeInForce):
                         side=orderSide,
                         time_in_force=timeInForce
                     )
-
-# Limit order
-limit_order = trading_client.submit_order(
-                order_data=limit_order_data
-              )
+    return limit_order_data
 
 
 def getData():
@@ -86,7 +103,7 @@ def getData():
     headers = {
         "accept": "application/json",
         "APCA-API-KEY-ID": "", #fill out
-        "APCA-API-SECRET-KEY": ""
+        "APCA-API-SECRET-KEY": "" # fill out
     }
 
     response = requests.get(url, headers=headers)
